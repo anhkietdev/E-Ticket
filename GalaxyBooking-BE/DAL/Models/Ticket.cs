@@ -1,9 +1,7 @@
 ﻿namespace DAL.Models
 {
-    public class Ticket
+    public class Ticket : BaseEntity
     {
-        public int TicketId { get; set; }
-
         public DateTime PurchaseTime { get; set; }
 
         public decimal Price { get; set; }
@@ -16,7 +14,7 @@
 
         public virtual Seat Seat { get; set; }
 
-        public int UserId { get; set; }
+        public Guid UserId { get; set; }
 
         public virtual User User { get; set; }
     }

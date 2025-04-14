@@ -3,20 +3,8 @@
   "WorkspaceRootPath": "D:\\fpt\\B3W\\galaxy-cinema-booking\\GalaxyBooking-BE\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{8A31A57F-8E2D-43C4-B1D0-D24F36B5BEE7}|DAL\\DAL.csproj|d:\\fpt\\b3w\\galaxy-cinema-booking\\galaxybooking-be\\dal\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8A31A57F-8E2D-43C4-B1D0-D24F36B5BEE7}|DAL\\DAL.csproj|solutionrelative:dal\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8A31A57F-8E2D-43C4-B1D0-D24F36B5BEE7}|DAL\\DAL.csproj|d:\\fpt\\b3w\\galaxy-cinema-booking\\galaxybooking-be\\dal\\models\\userrole.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8A31A57F-8E2D-43C4-B1D0-D24F36B5BEE7}|DAL\\DAL.csproj|solutionrelative:dal\\models\\userrole.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8A31A57F-8E2D-43C4-B1D0-D24F36B5BEE7}|DAL\\DAL.csproj|d:\\fpt\\b3w\\galaxy-cinema-booking\\galaxybooking-be\\dal\\models\\ticket.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8A31A57F-8E2D-43C4-B1D0-D24F36B5BEE7}|DAL\\DAL.csproj|solutionrelative:dal\\models\\ticket.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8A31A57F-8E2D-43C4-B1D0-D24F36B5BEE7}|DAL\\DAL.csproj|d:\\fpt\\b3w\\galaxy-cinema-booking\\galaxybooking-be\\dal\\models\\projection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8A31A57F-8E2D-43C4-B1D0-D24F36B5BEE7}|DAL\\DAL.csproj|solutionrelative:dal\\models\\projection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{8A31A57F-8E2D-43C4-B1D0-D24F36B5BEE7}|DAL\\DAL.csproj|d:\\fpt\\b3w\\galaxy-cinema-booking\\galaxybooking-be\\dal\\models\\film.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8A31A57F-8E2D-43C4-B1D0-D24F36B5BEE7}|DAL\\DAL.csproj|solutionrelative:dal\\models\\film.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{8A31A57F-8E2D-43C4-B1D0-D24F36B5BEE7}|DAL\\DAL.csproj|d:\\fpt\\b3w\\galaxy-cinema-booking\\galaxybooking-be\\dal\\models\\filmgenre.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -27,12 +15,8 @@
       "RelativeMoniker": "D:0:0:{8A31A57F-8E2D-43C4-B1D0-D24F36B5BEE7}|DAL\\DAL.csproj|solutionrelative:dal\\models\\genre.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8A31A57F-8E2D-43C4-B1D0-D24F36B5BEE7}|DAL\\DAL.csproj|d:\\fpt\\b3w\\galaxy-cinema-booking\\galaxybooking-be\\dal\\models\\film.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8A31A57F-8E2D-43C4-B1D0-D24F36B5BEE7}|DAL\\DAL.csproj|solutionrelative:dal\\models\\film.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8A31A57F-8E2D-43C4-B1D0-D24F36B5BEE7}|DAL\\DAL.csproj|d:\\fpt\\b3w\\galaxy-cinema-booking\\galaxybooking-be\\dal\\models\\seat.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8A31A57F-8E2D-43C4-B1D0-D24F36B5BEE7}|DAL\\DAL.csproj|solutionrelative:dal\\models\\seat.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{8A31A57F-8E2D-43C4-B1D0-D24F36B5BEE7}|DAL\\DAL.csproj|d:\\fpt\\b3w\\galaxy-cinema-booking\\galaxybooking-be\\dal\\models\\projection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8A31A57F-8E2D-43C4-B1D0-D24F36B5BEE7}|DAL\\DAL.csproj|solutionrelative:dal\\models\\projection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{8A31A57F-8E2D-43C4-B1D0-D24F36B5BEE7}|DAL\\DAL.csproj|d:\\fpt\\b3w\\galaxy-cinema-booking\\galaxybooking-be\\dal\\models\\room.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -41,6 +25,26 @@
     {
       "AbsoluteMoniker": "D:0:0:{8A31A57F-8E2D-43C4-B1D0-D24F36B5BEE7}|DAL\\DAL.csproj|d:\\fpt\\b3w\\galaxy-cinema-booking\\galaxybooking-be\\dal\\models\\roomtype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{8A31A57F-8E2D-43C4-B1D0-D24F36B5BEE7}|DAL\\DAL.csproj|solutionrelative:dal\\models\\roomtype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8A31A57F-8E2D-43C4-B1D0-D24F36B5BEE7}|DAL\\DAL.csproj|d:\\fpt\\b3w\\galaxy-cinema-booking\\galaxybooking-be\\dal\\models\\seat.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8A31A57F-8E2D-43C4-B1D0-D24F36B5BEE7}|DAL\\DAL.csproj|solutionrelative:dal\\models\\seat.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8A31A57F-8E2D-43C4-B1D0-D24F36B5BEE7}|DAL\\DAL.csproj|d:\\fpt\\b3w\\galaxy-cinema-booking\\galaxybooking-be\\dal\\models\\ticket.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8A31A57F-8E2D-43C4-B1D0-D24F36B5BEE7}|DAL\\DAL.csproj|solutionrelative:dal\\models\\ticket.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8A31A57F-8E2D-43C4-B1D0-D24F36B5BEE7}|DAL\\DAL.csproj|d:\\fpt\\b3w\\galaxy-cinema-booking\\galaxybooking-be\\dal\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8A31A57F-8E2D-43C4-B1D0-D24F36B5BEE7}|DAL\\DAL.csproj|solutionrelative:dal\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8A31A57F-8E2D-43C4-B1D0-D24F36B5BEE7}|DAL\\DAL.csproj|d:\\fpt\\b3w\\galaxy-cinema-booking\\galaxybooking-be\\dal\\models\\userrole.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8A31A57F-8E2D-43C4-B1D0-D24F36B5BEE7}|DAL\\DAL.csproj|solutionrelative:dal\\models\\userrole.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8A31A57F-8E2D-43C4-B1D0-D24F36B5BEE7}|DAL\\DAL.csproj|d:\\fpt\\b3w\\galaxy-cinema-booking\\galaxybooking-be\\dal\\context\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8A31A57F-8E2D-43C4-B1D0-D24F36B5BEE7}|DAL\\DAL.csproj|solutionrelative:dal\\context\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{8A31A57F-8E2D-43C4-B1D0-D24F36B5BEE7}|DAL\\DAL.csproj|d:\\fpt\\b3w\\galaxy-cinema-booking\\galaxybooking-be\\dal\\models\\baseentity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -62,7 +66,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 11,
           "Children": [
             {
               "$type": "Bookmark",
@@ -70,20 +74,33 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 10,
+              "Title": "AppDbContext.cs",
+              "DocumentMoniker": "D:\\fpt\\B3W\\galaxy-cinema-booking\\GalaxyBooking-BE\\DAL\\Context\\AppDbContext.cs",
+              "RelativeDocumentMoniker": "DAL\\Context\\AppDbContext.cs",
+              "ToolTip": "D:\\fpt\\B3W\\galaxy-cinema-booking\\GalaxyBooking-BE\\DAL\\Context\\AppDbContext.cs",
+              "RelativeToolTip": "DAL\\Context\\AppDbContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-14T16:30:14.896Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
               "Title": "UserRole.cs",
               "DocumentMoniker": "D:\\fpt\\B3W\\galaxy-cinema-booking\\GalaxyBooking-BE\\DAL\\Models\\UserRole.cs",
               "RelativeDocumentMoniker": "DAL\\Models\\UserRole.cs",
               "ToolTip": "D:\\fpt\\B3W\\galaxy-cinema-booking\\GalaxyBooking-BE\\DAL\\Models\\UserRole.cs",
               "RelativeToolTip": "DAL\\Models\\UserRole.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-14T16:19:49.119Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 8,
               "Title": "User.cs",
               "DocumentMoniker": "D:\\fpt\\B3W\\galaxy-cinema-booking\\GalaxyBooking-BE\\DAL\\Models\\User.cs",
               "RelativeDocumentMoniker": "DAL\\Models\\User.cs",
@@ -96,15 +113,67 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 7,
               "Title": "Ticket.cs",
               "DocumentMoniker": "D:\\fpt\\B3W\\galaxy-cinema-booking\\GalaxyBooking-BE\\DAL\\Models\\Ticket.cs",
               "RelativeDocumentMoniker": "DAL\\Models\\Ticket.cs",
               "ToolTip": "D:\\fpt\\B3W\\galaxy-cinema-booking\\GalaxyBooking-BE\\DAL\\Models\\Ticket.cs",
               "RelativeToolTip": "DAL\\Models\\Ticket.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-14T16:16:39.067Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Genre.cs",
+              "DocumentMoniker": "D:\\fpt\\B3W\\galaxy-cinema-booking\\GalaxyBooking-BE\\DAL\\Models\\Genre.cs",
+              "RelativeDocumentMoniker": "DAL\\Models\\Genre.cs",
+              "ToolTip": "D:\\fpt\\B3W\\galaxy-cinema-booking\\GalaxyBooking-BE\\DAL\\Models\\Genre.cs",
+              "RelativeToolTip": "DAL\\Models\\Genre.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-14T16:15:11.091Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Seat.cs",
+              "DocumentMoniker": "D:\\fpt\\B3W\\galaxy-cinema-booking\\GalaxyBooking-BE\\DAL\\Models\\Seat.cs",
+              "RelativeDocumentMoniker": "DAL\\Models\\Seat.cs",
+              "ToolTip": "D:\\fpt\\B3W\\galaxy-cinema-booking\\GalaxyBooking-BE\\DAL\\Models\\Seat.cs",
+              "RelativeToolTip": "DAL\\Models\\Seat.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-14T16:13:48.745Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "RoomType.cs",
+              "DocumentMoniker": "D:\\fpt\\B3W\\galaxy-cinema-booking\\GalaxyBooking-BE\\DAL\\Models\\RoomType.cs",
+              "RelativeDocumentMoniker": "DAL\\Models\\RoomType.cs",
+              "ToolTip": "D:\\fpt\\B3W\\galaxy-cinema-booking\\GalaxyBooking-BE\\DAL\\Models\\RoomType.cs",
+              "RelativeToolTip": "DAL\\Models\\RoomType.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-14T16:13:26.84Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Room.cs",
+              "DocumentMoniker": "D:\\fpt\\B3W\\galaxy-cinema-booking\\GalaxyBooking-BE\\DAL\\Models\\Room.cs",
+              "RelativeDocumentMoniker": "DAL\\Models\\Room.cs",
+              "ToolTip": "D:\\fpt\\B3W\\galaxy-cinema-booking\\GalaxyBooking-BE\\DAL\\Models\\Room.cs",
+              "RelativeToolTip": "DAL\\Models\\Room.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-14T16:12:50.238Z",
               "EditorCaption": ""
             },
             {
@@ -115,92 +184,40 @@
               "RelativeDocumentMoniker": "DAL\\Models\\Projection.cs",
               "ToolTip": "D:\\fpt\\B3W\\galaxy-cinema-booking\\GalaxyBooking-BE\\DAL\\Models\\Projection.cs",
               "RelativeToolTip": "DAL\\Models\\Projection.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-14T16:16:23.374Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 1,
               "Title": "FilmGenre.cs",
               "DocumentMoniker": "D:\\fpt\\B3W\\galaxy-cinema-booking\\GalaxyBooking-BE\\DAL\\Models\\FilmGenre.cs",
               "RelativeDocumentMoniker": "DAL\\Models\\FilmGenre.cs",
               "ToolTip": "D:\\fpt\\B3W\\galaxy-cinema-booking\\GalaxyBooking-BE\\DAL\\Models\\FilmGenre.cs",
               "RelativeToolTip": "DAL\\Models\\FilmGenre.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-14T16:15:54.533Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 0,
               "Title": "Film.cs",
               "DocumentMoniker": "D:\\fpt\\B3W\\galaxy-cinema-booking\\GalaxyBooking-BE\\DAL\\Models\\Film.cs",
               "RelativeDocumentMoniker": "DAL\\Models\\Film.cs",
               "ToolTip": "D:\\fpt\\B3W\\galaxy-cinema-booking\\GalaxyBooking-BE\\DAL\\Models\\Film.cs",
               "RelativeToolTip": "DAL\\Models\\Film.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABwAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-14T16:15:30.359Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Genre.cs",
-              "DocumentMoniker": "D:\\fpt\\B3W\\galaxy-cinema-booking\\GalaxyBooking-BE\\DAL\\Models\\Genre.cs",
-              "RelativeDocumentMoniker": "DAL\\Models\\Genre.cs",
-              "ToolTip": "D:\\fpt\\B3W\\galaxy-cinema-booking\\GalaxyBooking-BE\\DAL\\Models\\Genre.cs",
-              "RelativeToolTip": "DAL\\Models\\Genre.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-14T16:15:11.091Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "Seat.cs",
-              "DocumentMoniker": "D:\\fpt\\B3W\\galaxy-cinema-booking\\GalaxyBooking-BE\\DAL\\Models\\Seat.cs",
-              "RelativeDocumentMoniker": "DAL\\Models\\Seat.cs",
-              "ToolTip": "D:\\fpt\\B3W\\galaxy-cinema-booking\\GalaxyBooking-BE\\DAL\\Models\\Seat.cs",
-              "RelativeToolTip": "DAL\\Models\\Seat.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAABAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-14T16:13:48.745Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "RoomType.cs",
-              "DocumentMoniker": "D:\\fpt\\B3W\\galaxy-cinema-booking\\GalaxyBooking-BE\\DAL\\Models\\RoomType.cs",
-              "RelativeDocumentMoniker": "DAL\\Models\\RoomType.cs",
-              "ToolTip": "D:\\fpt\\B3W\\galaxy-cinema-booking\\GalaxyBooking-BE\\DAL\\Models\\RoomType.cs",
-              "RelativeToolTip": "DAL\\Models\\RoomType.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAALAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-14T16:13:26.84Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "Room.cs",
-              "DocumentMoniker": "D:\\fpt\\B3W\\galaxy-cinema-booking\\GalaxyBooking-BE\\DAL\\Models\\Room.cs",
-              "RelativeDocumentMoniker": "DAL\\Models\\Room.cs",
-              "ToolTip": "D:\\fpt\\B3W\\galaxy-cinema-booking\\GalaxyBooking-BE\\DAL\\Models\\Room.cs",
-              "RelativeToolTip": "DAL\\Models\\Room.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAaAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-14T16:12:50.238Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 11,
               "Title": "BaseEntity.cs",
               "DocumentMoniker": "D:\\fpt\\B3W\\galaxy-cinema-booking\\GalaxyBooking-BE\\DAL\\Models\\BaseEntity.cs",
               "RelativeDocumentMoniker": "DAL\\Models\\BaseEntity.cs",
@@ -213,7 +230,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 12,
               "Title": "BAL.csproj",
               "DocumentMoniker": "D:\\fpt\\B3W\\galaxy-cinema-booking\\GalaxyBooking-BE\\BAL\\BAL.csproj",
               "RelativeDocumentMoniker": "BAL\\BAL.csproj",
@@ -226,7 +243,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 13,
               "Title": "Class1.cs",
               "DocumentMoniker": "D:\\fpt\\B3W\\galaxy-cinema-booking\\GalaxyBooking-BE\\BAL\\Class1.cs",
               "RelativeDocumentMoniker": "BAL\\Class1.cs",
@@ -234,7 +251,8 @@
               "RelativeToolTip": "BAL\\Class1.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-14T09:54:51.079Z"
+              "WhenOpened": "2025-04-14T09:54:51.079Z",
+              "EditorCaption": ""
             }
           ]
         }
