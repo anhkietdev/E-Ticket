@@ -4,8 +4,6 @@ namespace DAL.Models
 {
     public class Room : BaseEntity
     {
-        public int RoomId { get; set; }
-
         public string RoomNumber { get; set; }
 
         public RoomType Type { get; set; }
@@ -13,5 +11,7 @@ namespace DAL.Models
         public int Capacity { get; set; }
 
         public virtual ICollection<Seat> Seats { get; set; }
+
+        public virtual ICollection<Projection> Projections { get; set; }
     }
 }

@@ -6,11 +6,11 @@
 
         public decimal Price { get; set; }
 
-        public int ProjectionId { get; set; }
+        public Guid ProjectionId { get; set; }
 
         public virtual Projection Projection { get; set; }
 
-        public int SeatId { get; set; }
+        public Guid SeatId { get; set; }
 
         public virtual Seat Seat { get; set; }
 

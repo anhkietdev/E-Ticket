@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DAL.Models
 {
-    public class Projection
+    public class Projection : BaseEntity
     {
         public DateTime StartTime { get; set; }
 
@@ -11,11 +11,11 @@ namespace DAL.Models
 
         public decimal Price { get; set; }
 
-        public int FilmId { get; set; }
+        public Guid FilmId { get; set; }
 
         public virtual Film Film { get; set; }
 
-        public int RoomId { get; set; }
+        public Guid RoomId { get; set; }
 
         public virtual Room Room { get; set; }
 

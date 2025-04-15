@@ -2,9 +2,9 @@
 {
     public class FilmGenre : BaseEntity
     {
-        public int FilmId { get; set; }
+        public Guid FilmId { get; set; }
 
-        public int GenreId { get; set; }
+        public Guid GenreId { get; set; }
 
         public virtual Film Film { get; set; }
 
