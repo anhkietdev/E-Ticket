@@ -6,7 +6,7 @@
 
         public required string Row { get; set; }
 
-        public int RoomId { get; set; }
+        public Guid RoomId { get; set; }
 
         public virtual Room Room { get; set; }
 
