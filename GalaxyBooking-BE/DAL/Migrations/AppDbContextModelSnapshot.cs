@@ -372,13 +372,13 @@ namespace DAL.Migrations
                     b.HasOne("DAL.Models.Film", "Film")
                         .WithMany("FilmGenres")
                         .HasForeignKey("FilmId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("DAL.Models.Genre", "Genre")
                         .WithMany("FilmGenres")
                         .HasForeignKey("GenreId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Film");
@@ -391,13 +391,13 @@ namespace DAL.Migrations
                     b.HasOne("DAL.Models.Film", "Film")
                         .WithMany("Projections")
                         .HasForeignKey("FilmId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("DAL.Models.Room", "Room")
                         .WithMany("Projections")
                         .HasForeignKey("RoomId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Film");
@@ -410,7 +410,7 @@ namespace DAL.Migrations
                     b.HasOne("DAL.Models.Room", "Room")
                         .WithMany("Seats")
                         .HasForeignKey("RoomId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Room");
@@ -421,19 +421,19 @@ namespace DAL.Migrations
                     b.HasOne("DAL.Models.Projection", "Projection")
                         .WithMany("Tickets")
                         .HasForeignKey("ProjectionId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("DAL.Models.Seat", "Seat")
                         .WithMany("Tickets")
                         .HasForeignKey("SeatId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("DAL.Models.User", "User")
                         .WithMany("Tickets")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Projection");

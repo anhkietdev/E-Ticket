@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250414171413_refactorOnModelCreating")]
-    partial class refactorOnModelCreating
+    [Migration("20250417130954_add_relationship")]
+    partial class add_relationship
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -87,16 +87,10 @@ namespace DAL.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("FilmId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("FilmId1")
+                    b.Property<Guid>("FilmId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("GenreId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("GenreId1")
+                    b.Property<Guid>("GenreId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsDeleted")
@@ -110,9 +104,9 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FilmId1");
+                    b.HasIndex("FilmId");
 
-                    b.HasIndex("GenreId1");
+                    b.HasIndex("GenreId");
 
                     b.ToTable("FilmGenres");
                 });
@@ -168,10 +162,7 @@ namespace DAL.Migrations
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("FilmId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("FilmId1")
+                    b.Property<Guid>("FilmId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsDeleted")
@@ -180,10 +171,7 @@ namespace DAL.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("RoomId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("RoomId1")
+                    b.Property<Guid>("RoomId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("StartTime")
@@ -197,9 +185,9 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FilmId1");
+                    b.HasIndex("FilmId");
 
-                    b.HasIndex("RoomId1");
+                    b.HasIndex("RoomId");
 
                     b.ToTable("Projections");
                 });
@@ -224,9 +212,6 @@ namespace DAL.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
-
-                    b.Property<int>("RoomId")
-                        .HasColumnType("int");
 
                     b.Property<string>("RoomNumber")
                         .IsRequired()
@@ -264,10 +249,7 @@ namespace DAL.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<int>("RoomId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("RoomId1")
+                    b.Property<Guid>("RoomId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Row")
@@ -286,7 +268,7 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RoomId1");
+                    b.HasIndex("RoomId");
 
                     b.ToTable("Seats");
                 });
@@ -312,10 +294,7 @@ namespace DAL.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("ProjectionId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("ProjectionId1")
+                    b.Property<Guid>("ProjectionId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("PurchaseTime")
@@ -335,7 +314,7 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProjectionId1");
+                    b.HasIndex("ProjectionId");
 
                     b.HasIndex("SeatId");
 
@@ -395,14 +374,14 @@ namespace DAL.Migrations
                 {
                     b.HasOne("DAL.Models.Film", "Film")
                         .WithMany("FilmGenres")
-                        .HasForeignKey("FilmId1")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("FilmId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("DAL.Models.Genre", "Genre")
                         .WithMany("FilmGenres")
-                        .HasForeignKey("GenreId1")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("GenreId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Film");
@@ -414,14 +393,14 @@ namespace DAL.Migrations
                 {
                     b.HasOne("DAL.Models.Film", "Film")
                         .WithMany("Projections")
-                        .HasForeignKey("FilmId1")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("FilmId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("DAL.Models.Room", "Room")
-                        .WithMany()
-                        .HasForeignKey("RoomId1")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .WithMany("Projections")
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Film");
@@ -433,8 +412,8 @@ namespace DAL.Migrations
                 {
                     b.HasOne("DAL.Models.Room", "Room")
                         .WithMany("Seats")
-                        .HasForeignKey("RoomId1")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Room");
@@ -444,20 +423,20 @@ namespace DAL.Migrations
                 {
                     b.HasOne("DAL.Models.Projection", "Projection")
                         .WithMany("Tickets")
-                        .HasForeignKey("ProjectionId1")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("ProjectionId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("DAL.Models.Seat", "Seat")
                         .WithMany("Tickets")
                         .HasForeignKey("SeatId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("DAL.Models.User", "User")
                         .WithMany("Tickets")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Projection");
@@ -486,6 +465,8 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("DAL.Models.Room", b =>
                 {
+                    b.Navigation("Projections");
+
                     b.Navigation("Seats");
                 });
 

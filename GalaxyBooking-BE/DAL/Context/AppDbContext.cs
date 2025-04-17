@@ -22,11 +22,53 @@ namespace DAL.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
-            {
-                relationship.DeleteBehavior = DeleteBehavior.NoAction;
-            }
+            modelBuilder.Entity<FilmGenre>()
+                .HasOne(e => e.Film)
+                .WithMany(e => e.FilmGenres)
+                .HasForeignKey(e => e.FilmId)
+                .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<FilmGenre>()
+               .HasOne(e => e.Genre)
+               .WithMany(e => e.FilmGenres)
+               .HasForeignKey(e => e.GenreId)
+               .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Projection>()
+               .HasOne(e => e.Film)
+               .WithMany(e => e.Projections)
+               .HasForeignKey(e => e.FilmId)
+               .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Projection>()
+               .HasOne(e => e.Room)
+               .WithMany(e => e.Projections)
+               .HasForeignKey(e => e.RoomId)
+               .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Seat>()
+              .HasOne(e => e.Room)
+              .WithMany(e => e.Seats)
+              .HasForeignKey(e => e.RoomId)
+              .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Ticket>()
+              .HasOne(e => e.Projection)
+              .WithMany(e => e.Tickets)
+              .HasForeignKey(e => e.ProjectionId)
+              .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Ticket>()
+              .HasOne(e => e.Seat)
+              .WithMany(e => e.Tickets)
+              .HasForeignKey(e => e.SeatId)
+              .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Ticket>()
+             .HasOne(e => e.User)
+             .WithMany(e => e.Tickets)
+             .HasForeignKey(e => e.UserId)
+             .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
