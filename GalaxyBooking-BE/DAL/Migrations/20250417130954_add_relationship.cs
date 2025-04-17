@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class add_relationship : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -56,7 +56,6 @@ namespace DAL.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RoomId = table.Column<int>(type: "int", nullable: false),
                     RoomNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
                     Capacity = table.Column<int>(type: "int", nullable: false),
@@ -99,10 +98,8 @@ namespace DAL.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FilmId = table.Column<int>(type: "int", nullable: false),
-                    GenreId = table.Column<int>(type: "int", nullable: false),
-                    FilmId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    GenreId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FilmId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    GenreId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -114,17 +111,17 @@ namespace DAL.Migrations
                 {
                     table.PrimaryKey("PK_FilmGenres", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_FilmGenres_Films_FilmId1",
-                        column: x => x.FilmId1,
+                        name: "FK_FilmGenres_Films_FilmId",
+                        column: x => x.FilmId,
                         principalTable: "Films",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_FilmGenres_Genres_GenreId1",
-                        column: x => x.GenreId1,
+                        name: "FK_FilmGenres_Genres_GenreId",
+                        column: x => x.GenreId,
                         principalTable: "Genres",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -135,10 +132,8 @@ namespace DAL.Migrations
                     StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    FilmId = table.Column<int>(type: "int", nullable: false),
-                    FilmId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RoomId = table.Column<int>(type: "int", nullable: false),
-                    RoomId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FilmId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RoomId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -150,17 +145,17 @@ namespace DAL.Migrations
                 {
                     table.PrimaryKey("PK_Projections", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Projections_Films_FilmId1",
-                        column: x => x.FilmId1,
+                        name: "FK_Projections_Films_FilmId",
+                        column: x => x.FilmId,
                         principalTable: "Films",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Projections_Rooms_RoomId1",
-                        column: x => x.RoomId1,
+                        name: "FK_Projections_Rooms_RoomId",
+                        column: x => x.RoomId,
                         principalTable: "Rooms",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -170,8 +165,7 @@ namespace DAL.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SeatNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Row = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RoomId = table.Column<int>(type: "int", nullable: false),
-                    RoomId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RoomId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -183,11 +177,11 @@ namespace DAL.Migrations
                 {
                     table.PrimaryKey("PK_Seats", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Seats_Rooms_RoomId1",
-                        column: x => x.RoomId1,
+                        name: "FK_Seats_Rooms_RoomId",
+                        column: x => x.RoomId,
                         principalTable: "Rooms",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -197,10 +191,8 @@ namespace DAL.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PurchaseTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    ProjectionId = table.Column<int>(type: "int", nullable: false),
-                    ProjectionId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SeatId = table.Column<int>(type: "int", nullable: false),
-                    SeatId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProjectionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SeatId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -213,59 +205,59 @@ namespace DAL.Migrations
                 {
                     table.PrimaryKey("PK_Tickets", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Tickets_Projections_ProjectionId1",
-                        column: x => x.ProjectionId1,
+                        name: "FK_Tickets_Projections_ProjectionId",
+                        column: x => x.ProjectionId,
                         principalTable: "Projections",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Tickets_Seats_SeatId1",
-                        column: x => x.SeatId1,
+                        name: "FK_Tickets_Seats_SeatId",
+                        column: x => x.SeatId,
                         principalTable: "Seats",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Tickets_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_FilmGenres_FilmId1",
+                name: "IX_FilmGenres_FilmId",
                 table: "FilmGenres",
-                column: "FilmId1");
+                column: "FilmId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FilmGenres_GenreId1",
+                name: "IX_FilmGenres_GenreId",
                 table: "FilmGenres",
-                column: "GenreId1");
+                column: "GenreId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Projections_FilmId1",
+                name: "IX_Projections_FilmId",
                 table: "Projections",
-                column: "FilmId1");
+                column: "FilmId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Projections_RoomId1",
+                name: "IX_Projections_RoomId",
                 table: "Projections",
-                column: "RoomId1");
+                column: "RoomId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Seats_RoomId1",
+                name: "IX_Seats_RoomId",
                 table: "Seats",
-                column: "RoomId1");
+                column: "RoomId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tickets_ProjectionId1",
+                name: "IX_Tickets_ProjectionId",
                 table: "Tickets",
-                column: "ProjectionId1");
+                column: "ProjectionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tickets_SeatId1",
+                name: "IX_Tickets_SeatId",
                 table: "Tickets",
-                column: "SeatId1");
+                column: "SeatId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tickets_UserId",
