@@ -16,7 +16,11 @@ namespace DAL.Context
         public DbSet<User> Users { get; set; }
         #endregion
 
-        public AppDbContext(DbContextOptions options) : base(options)
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        {
+        }
+
+        public AppDbContext()
         {
         }
 
