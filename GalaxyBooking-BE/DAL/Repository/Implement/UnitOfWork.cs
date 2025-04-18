@@ -3,7 +3,7 @@ using DAL.Repository.Interface;
 
 namespace DAL.Repository.Implement
 {
-    internal class UnitOfWork : IUnitOfWork
+    public class UnitOfWork : IUnitOfWork
     {
         private readonly AppDbContext _context;
 
