@@ -1,12 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DAL.Models;
 
 namespace BAL.DTOs
 {
-    internal class FilmDto
+    public class FilmDto
     {
+        public required string Title { get; set; }
+
+        public string Description { get; set; }
+
+        public int Duration { get; set; } 
+
+        public string Director { get; set; }
+
+        public DateTime ReleaseDate { get; set; }
+
+        public virtual ICollection<FilmGenre> FilmGenres { get; set; }
+
+        public virtual ICollection<Projection>? Projections { get; set; }
     }
 }
