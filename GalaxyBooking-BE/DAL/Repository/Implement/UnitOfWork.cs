@@ -7,6 +7,8 @@ namespace DAL.Repository.Implement
     {
         private readonly AppDbContext _context;
 
+
+
         public IUserRepository UserRepository => throw new NotImplementedException();
 
         public IRoomRepository RoomRepository => throw new NotImplementedException();
@@ -21,18 +23,22 @@ namespace DAL.Repository.Implement
 
         public IProjectionRepository ProjectionRepository => throw new NotImplementedException();
 
+
         public UnitOfWork(AppDbContext context)
         {
             _context = context;
+            UserRepository = new UserRepository(_context);
+            RoomRepository = new RoomRepository(_context);
+            SeatRepository = new SeatRepository(_context);
+            TicketRepository = new TicketRepository(_context);
+            FilmRepository = new FilmRepository(_context);
+            GenreRepository = new GenreRepository(_context);
+            ProjectionRepository = new ProjectionRepository(_context);
         }
+
         public async Task SaveAsync()
         {
             await _context.SaveChangesAsync();
-        }
-
-        public void Dispose()
-        {
-            _context.Dispose();
         }
     }
 }
