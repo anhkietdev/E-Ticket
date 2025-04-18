@@ -32,14 +32,10 @@ namespace DAL.Repository.Implement
             GenreRepository = new GenreRepository(_context);
             ProjectionRepository = new ProjectionRepository(_context);
         }
+
         public async Task SaveAsync()
         {
             await _context.SaveChangesAsync();
-        }
-
-        public void Dispose()
-        {
-            _context.Dispose();
         }
     }
 }
