@@ -7,19 +7,22 @@ namespace DAL.Repository.Implement
     {
         private readonly AppDbContext _context;
 
-        public IUserRepository UserRepository { get; private set; }
 
-        public IRoomRepository RoomRepository { get; private set; }
 
-        public ISeatRepository SeatRepository { get; private set; }
+        public IUserRepository UserRepository => throw new NotImplementedException();
 
-        public ITicketRepository TicketRepository { get; private set; }
+        public IRoomRepository RoomRepository => throw new NotImplementedException();
 
-        public IFilmRepository FilmRepository { get; private set; }
+        public ISeatRepository SeatRepository => throw new NotImplementedException();
 
-        public IGenreRepository GenreRepository { get; private set; }
+        public ITicketRepository TicketRepository => throw new NotImplementedException();
 
-        public IProjectionRepository ProjectionRepository { get; private set; }
+        public IFilmRepository FilmRepository => throw new NotImplementedException();
+
+        public IGenreRepository GenreRepository => throw new NotImplementedException();
+
+        public IProjectionRepository ProjectionRepository => throw new NotImplementedException();
+
 
         public UnitOfWork(AppDbContext context)
         {
