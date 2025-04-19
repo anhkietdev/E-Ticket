@@ -21,6 +21,7 @@ namespace DAL.Repository.Implement
 
         public IProjectionRepository ProjectionRepository { get; private set; }
 
+        public IAuthenticationRepository AuthenticationRepository { get; private set; }
 
         public UnitOfWork(AppDbContext context)
         {
@@ -32,6 +33,7 @@ namespace DAL.Repository.Implement
             FilmRepository = new FilmRepository(_context);
             GenreRepository = new GenreRepository(_context);
             ProjectionRepository = new ProjectionRepository(_context);
+            AuthenticationRepository = new AuthenticationRepository(_context);
         }
 
         public async Task SaveAsync()

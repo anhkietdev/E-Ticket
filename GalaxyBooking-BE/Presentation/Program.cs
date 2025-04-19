@@ -1,9 +1,7 @@
 using BAL.DTOs;
-using BAL.Interfaces;
-using BAL.Services;
+using BAL.Services.Implement;
+using BAL.Services.Interface;
 using DAL.Context;
-using DAL.Interfaces;
-using DAL.Repositories;
 using DAL.Repository.Implement;
 using DAL.Repository.Interface;
 using Microsoft.EntityFrameworkCore;

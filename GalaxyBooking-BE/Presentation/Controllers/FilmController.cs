@@ -1,11 +1,10 @@
-﻿using BAL.Interfaces;
-using DAL.Interfaces;
+﻿using BAL.Services.Interface;
 using DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers
 {
-    public class FilmController : Controller
+    public class FilmController : BaseController
     {
         private readonly IFilmService _filmService;
 
@@ -22,9 +21,9 @@ namespace Presentation.Controllers
                 var films = await _filmService.GetFilms();
                 return Ok(films);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
-                return StatusCode(400,$"{ex.Message}");
+                return StatusCode(400, $"{ex.Message}");
             }
         }
     }

@@ -3,7 +3,7 @@ using DAL.Models;
 
 namespace BAL.Services.Interface
 {
-    public interface IFilmService2
+    public interface IFilmService
     {
         Task CreateAsync(FilmDto filmDto);
         Task UpdateAsync(Guid id, FilmDto filmDto);
@@ -16,5 +16,6 @@ namespace BAL.Services.Interface
             string? director = null,
             DateTime? releaseDate = null
         );
+        Task<List<Film>> GetFilms();
     }
 }

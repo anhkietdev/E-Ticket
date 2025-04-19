@@ -1,12 +1,9 @@
-﻿using BAL.Interfaces;
-using Microsoft.AspNetCore.Identity.Data;
+﻿using BAL.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class AuthenticationController : Controller
+    public class AuthenticationController : BaseController
     {
         private readonly IAuthenticationService _authService;
 
@@ -20,7 +17,7 @@ namespace Presentation.Controllers
         {
             try
             {
-                if (request == null || string.IsNullOrEmpty(request.Email   ) || string.IsNullOrEmpty(request.Password))
+                if (request == null || string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
                 {
                     return BadRequest("Username and password are required.");
                 }

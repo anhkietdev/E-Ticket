@@ -16,6 +16,8 @@
 
         public IProjectionRepository ProjectionRepository { get; }
 
+        public IAuthenticationRepository AuthenticationRepository { get; }
+
         Task SaveAsync();
     }
 }
