@@ -12,7 +12,7 @@ const Card = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
-  
+
   &:hover {
     transform: translateY(-5px);
   }
@@ -22,7 +22,7 @@ const PosterContainer = styled.div`
   position: relative;
   width: 100%;
   height: 0;
-  padding-top: 150%; /* Tỷ lệ poster phim thường là 2:3 */
+  padding-top: 150%;
   overflow: hidden;
 `;
 
@@ -34,7 +34,7 @@ const Poster = styled.img`
   height: 100%;
   object-fit: cover;
   transition: transform 0.3s ease;
-  
+
   ${Card}:hover & {
     transform: scale(1.05);
   }
@@ -92,7 +92,7 @@ const BookButton = styled(Link)`
   transition: background 0.3s;
   text-decoration: none;
   display: block;
-  
+
   &:hover {
     background: #ff6b81;
   }
@@ -105,33 +105,37 @@ const GenresContainer = styled.div`
 `;
 
 const MovieCard = ({ movie }) => {
-  // Giới hạn genre hiển thị
-  const displayGenres = movie.genre.slice(0, 2);
-  
+  // Chuyển đổi thể loại nếu là chuỗi hoặc null
+  let displayGenres = [];
+
+  if (movie.filmGenres && Array.isArray(movie.filmGenres)) {
+    displayGenres = movie.filmGenres.slice(0, 2);
+  } else if (typeof movie.filmGenres === 'string') {
+    displayGenres = movie.filmGenres.split(',').map(g => g.trim()).slice(0, 2);
+  }
+
   return (
     <Card>
       <PosterContainer>
-        <Poster src={movie.poster} alt={movie.title} />
+        <Poster
+          src={movie.imageUrl || 'https://via.placeholder.com/300x450?text=No+Image'}
+          alt={movie.title}
+        />
       </PosterContainer>
       <Content>
         <Title>{movie.title}</Title>
-        
-        <InfoRow>
-          <InfoIcon><FaStar /></InfoIcon>
-          {movie.rating}/10
-        </InfoRow>
-        
+
         <InfoRow>
           <InfoIcon><FaClock /></InfoIcon>
           {Math.floor(movie.duration / 60)}h {movie.duration % 60}m
         </InfoRow>
-        
+
         <GenresContainer>
           {displayGenres.map((genre, index) => (
             <GenreBadge key={index}>{genre}</GenreBadge>
           ))}
         </GenresContainer>
-        
+
         <BookButton to={`/movies/${movie.id}`}>
           Chi tiết & Đặt vé
         </BookButton>
