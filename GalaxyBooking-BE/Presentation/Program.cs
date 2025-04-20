@@ -1,27 +1,22 @@
-using BAL.Interfaces;
-using BAL.Services;
+using BAL.DTOs;
 using BAL.Services.Implement;
 using BAL.Services.Interface;
 using DAL.Context;
-using DAL.Interfaces;
-using DAL.Repositories;
 using DAL.Repository.Implement;
 using DAL.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-
+//add automapper
+builder.Services.AddAutoMapper(typeof(MappingProfile));
+//add unitofwork
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 // Add services to the container.
-builder.Services.AddScoped<DAL.Interfaces.IFilmRepository, DAL.Repositories.FilmRepository>();
 builder.Services.AddScoped<IFilmService, FilmService>();
 
 builder.Services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
-
-//builder.Services.AddScoped<IProjectionRepository, ProjectionRepository>();
-//builder.Services.AddScoped<IProjectionService, ProjectionService>();
-
-
+builder.Services.AddScoped<IProjectionService, ProjectionService>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

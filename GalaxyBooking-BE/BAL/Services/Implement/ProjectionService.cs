@@ -51,8 +51,7 @@ namespace BAL.Services.Implement
         public async Task<IEnumerable<ProjectionDto>> GetAllAsync()
         {
             var projections = await _unitOfWork.ProjectionRepository.GetAllAsync(
-                filter: p => !p.IsDeleted,
-                includeProperties: "Film,Room");
+                filter: p => !p.IsDeleted);
             return _mapper.Map<IEnumerable<ProjectionDto>>(projections);
         }
 
@@ -96,8 +95,7 @@ namespace BAL.Services.Implement
         public async Task UpdateAsync(ProjectionDto projectionDto)
         {
             var projection = await _unitOfWork.ProjectionRepository.GetAsync(
-                p => p.Id == projectionDto.Id && !p.IsDeleted,
-                includeProperties: "Film,Room");
+                p => p.Id == projectionDto.Id && !p.IsDeleted);
             if (projection == null)
             {
                 throw new Exception("Projection not found or has been deleted");

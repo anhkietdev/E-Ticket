@@ -1,14 +1,7 @@
-﻿using BAL.Interfaces;
-using DAL.Interfaces;
-using DAL.Models;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BAL.Services.Interface;
+using DAL.Repository.Interface;
 
-namespace BAL.Services
+namespace BAL.Services.Implement
 {
     public class AuthenticationService : IAuthenticationService
     {
