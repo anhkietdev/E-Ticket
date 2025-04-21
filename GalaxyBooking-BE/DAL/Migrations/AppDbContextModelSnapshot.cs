@@ -141,6 +141,31 @@ namespace DAL.Migrations
                     b.ToTable("Genres");
                 });
 
+            modelBuilder.Entity("DAL.Models.IdentityUser", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("OtpCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("OtpCodeExpiration")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("PasswordHash")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("IdentityUsers");
+                });
+
             modelBuilder.Entity("DAL.Models.Projection", b =>
                 {
                     b.Property<Guid>("Id")
@@ -384,6 +409,17 @@ namespace DAL.Migrations
                     b.Navigation("Film");
 
                     b.Navigation("Genre");
+                });
+
+            modelBuilder.Entity("DAL.Models.IdentityUser", b =>
+                {
+                    b.HasOne("DAL.Models.User", "User")
+                        .WithOne()
+                        .HasForeignKey("DAL.Models.IdentityUser", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("DAL.Models.Projection", b =>

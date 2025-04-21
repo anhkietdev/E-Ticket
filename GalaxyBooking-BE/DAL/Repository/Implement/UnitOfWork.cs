@@ -3,7 +3,7 @@ using DAL.Repository.Interface;
 
 namespace DAL.Repository.Implement
 {
-    internal class UnitOfWork : IUnitOfWork
+    public class UnitOfWork : IUnitOfWork
     {
         private readonly AppDbContext _context;
 
@@ -21,6 +21,9 @@ namespace DAL.Repository.Implement
 
         public IProjectionRepository ProjectionRepository { get; private set; }
 
+        public IAuthenticationRepository AuthenticationRepository { get; private set; }
+
+        public IIdentityUserRepository IdentityUserRepository { get; private set; }
 
         public UnitOfWork(AppDbContext context)
         {
@@ -32,6 +35,8 @@ namespace DAL.Repository.Implement
             FilmRepository = new FilmRepository(_context);
             GenreRepository = new GenreRepository(_context);
             ProjectionRepository = new ProjectionRepository(_context);
+            AuthenticationRepository = new AuthenticationRepository(_context);
+            IdentityUserRepository = new IdentityUserRepository(_context);
         }
 
         public async Task SaveAsync()
