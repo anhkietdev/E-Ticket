@@ -16,6 +16,9 @@ namespace BAL.Services.Interface
             string? director = null,
             DateTime? releaseDate = null
         );
-        Task<List<Film>> GetFilms();
+        Task<IEnumerable<FilmDto>> GetFilmsAsync();
+        Task<IEnumerable<FilmDto>> FindByTitleAsync(string title);
+        Task<IEnumerable<FilmDto>> FindByDirectorAsync(string director);
+        Task<IEnumerable<FilmDto>> FindByReleaseDateAsync(DateTime releaseDate);
     }
 }

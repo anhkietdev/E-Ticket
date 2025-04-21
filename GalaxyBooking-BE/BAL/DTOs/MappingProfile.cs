@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DAL.Models;
 
 namespace BAL.DTOs
 {
@@ -7,6 +8,8 @@ namespace BAL.DTOs
         public MappingProfile()
         {
             //register mapper here
+            CreateMap<Projection, ProjectionDto>();
+            CreateMap<Film, FilmDto>();
         }
     }
 }
