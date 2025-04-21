@@ -10,16 +10,15 @@ namespace BAL.Services.Implement
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IConfiguration _configuration;
+        private readonly ITokenGenerator _tokenGenerator;
+        private readonly IEmailService _emailService;
 
-        public UserService(IUnitOfWork unitOfWork, IConfiguration configuration)
+        public UserService(IUnitOfWork unitOfWork, IConfiguration configuration, ITokenGenerator tokenGenerator, IEmailService emailService)
         {
             _unitOfWork = unitOfWork;
             _configuration = configuration;
-        }
-
-        public Task ForgotPasswordAsync(string email)
-        {
-            throw new NotImplementedException();
+            _tokenGenerator = tokenGenerator;
+            _emailService = emailService;
         }
 
         public async Task<AuthenResultDto> LoginAsync(LoginDto loginDto)
@@ -80,9 +79,50 @@ namespace BAL.Services.Implement
             };
         }
 
-        public Task<bool> VerifyOtpAsync(VerifyOtpDto verifyDto)
+        public async Task ForgotPasswordAsync(string email)
         {
-            throw new NotImplementedException();
+            var result = await _unitOfWork.UserRepository.GetAsync(
+                s => s.Email == email.Trim(),
+                tracked: true
+            );
+
+            var (otp, expiryTimeSpan) = _tokenGenerator.GenerateOtp();
+
+            await _unitOfWork.SaveAsync();
+
+            var mailBody = new MailDto
+            {
+                Receivers = new List<string> { email, }.AsReadOnly(),
+                Subject = "Forgot password",
+                Body =
+                    $"This is your otp: {otp}, expires in {expiryTimeSpan.Minutes} minutes.",
+            };
+
+            _ = Task.Run(() => _emailService.SendEmailAsync(mailBody));
+        }
+
+        public async Task<bool> VerifyOtpAsync(VerifyOtpDto verifyDto)
+        {
+            var result = await _unitOfWork.UserRepository.GetAsync(
+                s => s.Email == verifyDto.Email.Trim(),
+                tracked: false
+            );
+
+            //var isOtp = result.OtpCode.Equals(verifyDto.Otp.Trim());
+            //if (!isOtp)
+            //{
+            //    return false;
+            //}
+
+            //var expiration = result.OtpCodeExpiration!.Value;
+            //var now = DateTime.Now;
+
+            //if (now.CompareTo(expiration) > 0)
+            //{
+            //    return false;
+            //}
+
+            return true;
         }
     }
 }

@@ -14,6 +14,7 @@ namespace DAL.Context
         public DbSet<FilmGenre> FilmGenres { get; set; }
         public DbSet<Genre> Genres { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<IdentityUser> IdentityUsers { get; set; }
         #endregion
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
@@ -73,6 +74,11 @@ namespace DAL.Context
              .WithMany(e => e.Tickets)
              .HasForeignKey(e => e.UserId)
              .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<IdentityUser>()             
+             .HasOne(x => x.User)
+             .WithOne()
+             .HasForeignKey<IdentityUser>(x => x.UserId);
         }
     }
 }

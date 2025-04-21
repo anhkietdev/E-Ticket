@@ -23,6 +23,8 @@ namespace DAL.Repository.Implement
 
         public IAuthenticationRepository AuthenticationRepository { get; private set; }
 
+        public IIdentityUserRepository IdentityUserRepository { get; private set; }
+
         public UnitOfWork(AppDbContext context)
         {
             _context = context;
@@ -34,6 +36,7 @@ namespace DAL.Repository.Implement
             GenreRepository = new GenreRepository(_context);
             ProjectionRepository = new ProjectionRepository(_context);
             AuthenticationRepository = new AuthenticationRepository(_context);
+            IdentityUserRepository = new IdentityUserRepository(_context);
         }
 
         public async Task SaveAsync()
