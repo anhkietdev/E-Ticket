@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BAL.Services.Implement
@@ -23,104 +22,138 @@ namespace BAL.Services.Implement
             _mapper = mapper;
         }
 
-        public async Task AddAsync(ProjectionDto projectionDto)
+        public async Task<ProjectionResponseDto> CreateAsync(ProjectionRequestDto projectionDto)
         {
-            var projection = new Projection
-            {
-                StartTime = projectionDto.StartTime,
-                EndTime = projectionDto.EndTime,
-                Price = projectionDto.Price,
-                FilmId = projectionDto.FilmId,
-                RoomId = projectionDto.RoomId
-            };
+            if (projectionDto == null)
+                throw new ArgumentNullException(nameof(projectionDto));
+
+            // Kiểm tra FilmId và RoomId tồn tại
+            var film = await _unitOfWork.FilmRepository.GetAsync(f => f.Id == projectionDto.FilmId && !f.IsDeleted);
+            if (film == null)
+                throw new Exception("Film not found or has been deleted");
+
+            var room = await _unitOfWork.RoomRepository.GetAsync(r => r.Id == projectionDto.RoomId && !r.IsDeleted);
+            if (room == null)
+                throw new Exception("Room not found or has been deleted");
+
+            var projection = _mapper.Map<Projection>(projectionDto);
+            projection.Id = Guid.NewGuid();
+            projection.IsDeleted = false;
+            projection.CreatedAt = DateTime.Now;
+            projection.UpdatedAt = DateTime.Now;
+            projection.DeletedAt = null;
+
             await _unitOfWork.ProjectionRepository.AddAsync(projection);
             await _unitOfWork.SaveAsync();
+
+            // Tải lại Projection với Film, Room và Tickets
+            var savedProjection = await _unitOfWork.ProjectionRepository.GetAsync(
+                p => p.Id == projection.Id && !p.IsDeleted,
+                includeProperties: "Film,Room,Tickets");
+
+            return _mapper.Map<ProjectionResponseDto>(savedProjection);
+        }
+
+        public async Task<ProjectionResponseDto> UpdateAsync(Guid id, ProjectionRequestDto projectionDto)
+        {
+            var projection = await _unitOfWork.ProjectionRepository.GetAsync(
+                p => p.Id == id && !p.IsDeleted,
+                includeProperties: "Film,Room,Tickets");
+            if (projection == null)
+                throw new Exception("Projection not found or has been deleted");
+
+            // Kiểm tra FilmId và RoomId tồn tại
+            var film = await _unitOfWork.FilmRepository.GetAsync(f => f.Id == projectionDto.FilmId && !f.IsDeleted);
+            if (film == null)
+                throw new Exception("Film not found or has been deleted");
+
+            var room = await _unitOfWork.RoomRepository.GetAsync(r => r.Id == projectionDto.RoomId && !r.IsDeleted);
+            if (room == null)
+                throw new Exception("Room not found or has been deleted");
+
+            _mapper.Map(projectionDto, projection);
+            projection.UpdatedAt = DateTime.Now;
+
+            await _unitOfWork.ProjectionRepository.UpdateAsync(projection);
+            await _unitOfWork.SaveAsync();
+
+            // Tải lại Projection với Film, Room và Tickets
+            var updatedProjection = await _unitOfWork.ProjectionRepository.GetAsync(
+                p => p.Id == id && !p.IsDeleted,
+                includeProperties: "Film,Room,Tickets");
+
+            return _mapper.Map<ProjectionResponseDto>(updatedProjection);
         }
 
         public async Task DeleteAsync(Guid id)
         {
-            var projection = await _unitOfWork.ProjectionRepository.GetAsync(p => p.Id == id && !p.IsDeleted, includeProperties: "Film,Room");
-            if (projection == null)
-            {
-                throw new Exception("Projection not found or has been deleted");
-            }
-            await _unitOfWork.ProjectionRepository.RemoveAsync(projection);
-            await _unitOfWork.SaveAsync();
-        }
-
-        public async Task<IEnumerable<ProjectionDto>> GetAllAsync()
-        {
-            var projections = await _unitOfWork.ProjectionRepository.GetAllAsync(
-                filter: p => !p.IsDeleted);
-            return _mapper.Map<IEnumerable<ProjectionDto>>(projections);
-        }
-
-        public async Task<ProjectionDto> GetByIdAsync(Guid id)
-        {
             var projection = await _unitOfWork.ProjectionRepository.GetAsync(
-                filter: p => p.Id == id && !p.IsDeleted,
-                includeProperties: "Film,Room");
+                p => p.Id == id && !p.IsDeleted);
             if (projection == null)
-            {
                 throw new Exception("Projection not found or has been deleted");
-            }
-            return _mapper.Map<ProjectionDto>(projection);
-        }
 
-        public async Task<PagedDto<ProjectionDto>> GetPagingAsync(
-            int pageNumber,
-            int pageSize,
-            DateTime? startTime = null,
-            Guid? filmId = null,
-            Guid? roomId = null)
-        {
-            Expression<Func<Projection, bool>> filter = p =>
-                !p.IsDeleted &&
-                (!startTime.HasValue || p.StartTime.Date == startTime.Value.Date) &&
-                (!filmId.HasValue || p.FilmId == filmId.Value) &&
-                (!roomId.HasValue || p.RoomId == roomId.Value);
-
-            var projections = await _unitOfWork.ProjectionRepository.GetPagingAsync(
-                filter: filter,
-                includeProperties: "Film,Room",
-                orderBy: p => p.StartTime,
-                pageNumber: pageNumber,
-                pageSize: pageSize);
-
-            var totalItems = await _unitOfWork.ProjectionRepository.CountAsync(filter);
-            var projectionDtos = _mapper.Map<ICollection<ProjectionDto>>(projections);
-            return new PagedDto<ProjectionDto>(pageNumber, pageSize, totalItems, projectionDtos);
-        }
-
-        public async Task UpdateAsync(ProjectionDto projectionDto)
-        {
-            var projection = await _unitOfWork.ProjectionRepository.GetAsync(
-                p => p.Id == projectionDto.Id && !p.IsDeleted);
-            if (projection == null)
-            {
-                throw new Exception("Projection not found or has been deleted");
-            }
-
-            projection.StartTime = projectionDto.StartTime;
-            projection.EndTime = projectionDto.EndTime;
-            projection.Price = projectionDto.Price;
-            projection.FilmId = projectionDto.FilmId;
-            projection.RoomId = projectionDto.RoomId;
+            projection.IsDeleted = true;
+            projection.DeletedAt = DateTime.Now;
+            projection.UpdatedAt = DateTime.Now;
 
             await _unitOfWork.ProjectionRepository.UpdateAsync(projection);
             await _unitOfWork.SaveAsync();
         }
 
-        public async Task<IEnumerable<ProjectionDto>> FindByFilmIdAsync(Guid filmId)
+        public async Task<ProjectionResponseDto> GetByIdAsync(Guid id)
         {
-            var projections = await _unitOfWork.ProjectionRepository.FindByFilmIdAsync(filmId);
-            return _mapper.Map<IEnumerable<ProjectionDto>>(projections);
+            var projection = await _unitOfWork.ProjectionRepository.GetAsync(
+                filter: p => p.Id == id && !p.IsDeleted,
+                includeProperties: "Film,Room,Tickets");
+            if (projection == null)
+                throw new Exception("Projection not found or has been deleted");
+
+            return _mapper.Map<ProjectionResponseDto>(projection);
         }
 
-        public async Task<IEnumerable<ProjectionDto>> FindByRoomIdAsync(Guid roomId)
+        public async Task<PagedDto<ProjectionResponseDto>> GetPagingAsync(
+            int pageNumber,
+            int pageSize,
+            Guid? filmId = null,
+            Guid? roomId = null,
+            DateTime? startTime = null)
+        {
+            Expression<Func<Projection, bool>> filter = p =>
+                !p.IsDeleted &&
+                (!filmId.HasValue || p.FilmId == filmId.Value) &&
+                (!roomId.HasValue || p.RoomId == roomId.Value) &&
+                (!startTime.HasValue || p.StartTime.Date == startTime.Value.Date);
+
+            var projections = await _unitOfWork.ProjectionRepository.GetPagingAsync(
+                filter: filter,
+                includeProperties: "Film,Room,Tickets",
+                orderBy: p => p.StartTime,
+                pageNumber: pageNumber,
+                pageSize: pageSize);
+
+            var totalItems = await _unitOfWork.ProjectionRepository.CountAsync(filter);
+            var projectionDtos = _mapper.Map<ICollection<ProjectionResponseDto>>(projections);
+            return new PagedDto<ProjectionResponseDto>(pageNumber, pageSize, totalItems, projectionDtos);
+        }
+
+        public async Task<IEnumerable<ProjectionResponseDto>> GetAllAsync()
+        {
+            var projections = await _unitOfWork.ProjectionRepository.GetAllAsync(
+                filter: p => !p.IsDeleted,
+                includeProperties: "Film,Room,Tickets");
+            return _mapper.Map<IEnumerable<ProjectionResponseDto>>(projections);
+        }
+
+        public async Task<IEnumerable<ProjectionResponseDto>> FindByFilmIdAsync(Guid filmId)
+        {
+            var projections = await _unitOfWork.ProjectionRepository.FindByFilmIdAsync(filmId);
+            return _mapper.Map<IEnumerable<ProjectionResponseDto>>(projections);
+        }
+
+        public async Task<IEnumerable<ProjectionResponseDto>> FindByRoomIdAsync(Guid roomId)
         {
             var projections = await _unitOfWork.ProjectionRepository.FindByRoomIdAsync(roomId);
-            return _mapper.Map<IEnumerable<ProjectionDto>>(projections);
+            return _mapper.Map<IEnumerable<ProjectionResponseDto>>(projections);
         }
     }
 }
