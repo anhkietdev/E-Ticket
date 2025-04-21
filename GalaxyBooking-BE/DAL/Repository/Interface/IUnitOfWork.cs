@@ -18,6 +18,8 @@
 
         public IAuthenticationRepository AuthenticationRepository { get; }
 
+        public IIdentityUserRepository IdentityUserRepository { get; }
+
         Task SaveAsync();
     }
 }
