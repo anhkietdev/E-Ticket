@@ -97,7 +97,7 @@ namespace BAL.Services.Implement
         {
             var films = await _unitOfWork.FilmRepository.GetAllAsync(
                 filter: f => !f.IsDeleted,
-                includeProperties: "FilmGenres");
+                includeProperties: "FilmGenres, Projections");
             return _mapper.Map<IEnumerable<FilmDto>>(films);
         }
 
