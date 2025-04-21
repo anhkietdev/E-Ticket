@@ -1,4 +1,4 @@
-﻿using BAL.DTOs;
+﻿using BAL.DTOs.Authentication;
 
 namespace BAL.Services.Interface
 {
@@ -6,5 +6,8 @@ namespace BAL.Services.Interface
     {
         Task<AuthenResultDto> LoginAsync(LoginDto loginDto);
         Task<AuthenResultDto> RegisterAsync(RegisterDto registerDto);
+        Task ForgotPasswordAsync(string email);
+        Task<bool> VerifyOtpAsync(VerifyOtpDto verifyDto);
+
     }
 }
