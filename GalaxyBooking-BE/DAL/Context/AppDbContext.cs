@@ -14,18 +14,17 @@ namespace DAL.Context
         public DbSet<FilmGenre> FilmGenres { get; set; }
         public DbSet<Genre> Genres { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<IdentityUser> IdentityUsers { get; set; }
         #endregion
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
 
-        public AppDbContext()
-        {
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            AddGlobalQuery(modelBuilder);
+
             modelBuilder.Entity<FilmGenre>()
                 .HasOne(e => e.Film)
                 .WithMany(e => e.FilmGenres)
@@ -73,6 +72,23 @@ namespace DAL.Context
              .WithMany(e => e.Tickets)
              .HasForeignKey(e => e.UserId)
              .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<IdentityUser>()
+             .HasOne(x => x.User)
+             .WithOne()
+             .HasForeignKey<IdentityUser>(x => x.UserId);
+        }
+
+        private void AddGlobalQuery(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Film>().HasQueryFilter(o => !o.IsDeleted);
+            modelBuilder.Entity<FilmGenre>().HasQueryFilter(o => !o.IsDeleted);
+            modelBuilder.Entity<Genre>().HasQueryFilter(o => !o.IsDeleted);
+            modelBuilder.Entity<Projection>().HasQueryFilter(o => !o.IsDeleted);
+            modelBuilder.Entity<Room>().HasQueryFilter(o => !o.IsDeleted);
+            modelBuilder.Entity<Seat>().HasQueryFilter(o => !o.IsDeleted);
+            modelBuilder.Entity<Ticket>().HasQueryFilter(o => !o.IsDeleted);
+            modelBuilder.Entity<User>().HasQueryFilter(o => !o.IsDeleted);
         }
     }
 }

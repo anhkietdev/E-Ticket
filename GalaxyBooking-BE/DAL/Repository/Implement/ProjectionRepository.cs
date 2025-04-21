@@ -4,10 +4,24 @@ using DAL.Repository.Interface;
 
 namespace DAL.Repository.Implement
 {
-    internal class ProjectionRepository : Repository<Projection>, IProjectionRepository
+    public class ProjectionRepository : Repository<Projection>, IProjectionRepository
     {
+        private readonly AppDbContext _context;
         public ProjectionRepository(AppDbContext context) : base(context)
         {
+            _context = context;
+        }
+
+        public Task<ICollection<Projection>> FindByFilmIdAsync(Guid filmId)
+        {
+            return GetAllAsync(
+                filter: p => p.FilmId == filmId && !p.IsDeleted);
+        }
+
+        public Task<ICollection<Projection>> FindByRoomIdAsync(Guid roomId)
+        {
+            return GetAllAsync(
+                filter: p => p.RoomId == roomId && !p.IsDeleted);
         }
     }
 }
