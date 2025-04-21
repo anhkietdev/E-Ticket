@@ -1,9 +1,12 @@
 ﻿using BAL.DTOs;
 using BAL.Extension;
+using BAL.Helpers;
 using BAL.Services.Interface;
 using BAL.Services.ZaloPay.Config;
 using BAL.Services.ZaloPay.Request;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace BAL.Services.Implement
 {
@@ -14,8 +17,30 @@ namespace BAL.Services.Implement
         {
             _zaloPayConfig = zaloPayConfig.Value;
         }
+
+        public async Task<(int, string)> CallBackPayment(CallBackPaymentDTO request)
+        {
+            var reqMac = request.Mac;
+            var mac = HashHelper.HmacSha256(_zaloPayConfig.Key2, request.Data);
+
+            Console.WriteLine("mac = {0}", mac);
+
+            if (!reqMac.Equals(mac))
+            {
+                return (-1, "mac not equal");
+            }
+            else
+            {
+                var dataJson = JsonConvert.DeserializeObject<Dictionary<string, object>>(request.Data);
+                Console.WriteLine("update order's status = success where apptransid = {0}", dataJson["apptransid"]);
+
+                return (1, "mac not equal");
+            }
+        }
+
         public async Task<string> CreateZalopayPayment(PaymentDTO request)
         {
+            //todo add expandoobj for embeded data
             var zalopayRequest = new CreateZalopayRequest
             {
                 AppId = _zaloPayConfig.AppId,
