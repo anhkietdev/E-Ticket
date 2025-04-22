@@ -1,25 +1,31 @@
 
 
 
-# This stage is used to build the service project
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
-COPY ["Presentation/Presentation.csproj", "Presentation/"]
-COPY ["BAL/BAL.csproj", "BAL/"]
-COPY ["DAL/DAL.csproj", "DAL/"]
-RUN dotnet restore "./Presentation/Presentation.csproj"
-COPY . .
-WORKDIR "/src/Presentation"
-RUN dotnet build "./Presentation.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-# This stage is used to publish the service project to be copied to the final stage
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Presentation.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
-# This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
-FROM base AS final
+
+# Use Microsoft's .NET 8.0 SDK image
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
+
+# Set up the app environment
+
 WORKDIR /app
-COPY --from=publish /app/publish .
+
+# Copy everything and build
+
+COPY . ./
+
+RUN dotnet publish -c Release -o out
+
+# Runtime image
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+
+WORKDIR /app
+
+COPY --from=build-env /app/out .
+
+# Start the app
+
 ENTRYPOINT ["dotnet", "Presentation.dll"]
