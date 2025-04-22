@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\fpt\\B3W\\galaxy-cinema-booking\\Spring2025_SWD392_3W_Group1\\GalaxyBooking-BE\\BAL\\BAL.csproj": {}
+    "D:\\fe2\\Spring2025_SWD392_3W_Group1\\GalaxyBooking-BE\\BAL\\BAL.csproj": {}
   },
   "projects": {
-    "D:\\fpt\\B3W\\galaxy-cinema-booking\\Spring2025_SWD392_3W_Group1\\GalaxyBooking-BE\\BAL\\BAL.csproj": {
+    "D:\\fe2\\Spring2025_SWD392_3W_Group1\\GalaxyBooking-BE\\BAL\\BAL.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\fpt\\B3W\\galaxy-cinema-booking\\Spring2025_SWD392_3W_Group1\\GalaxyBooking-BE\\BAL\\BAL.csproj",
+        "projectUniqueName": "D:\\fe2\\Spring2025_SWD392_3W_Group1\\GalaxyBooking-BE\\BAL\\BAL.csproj",
         "projectName": "BAL",
-        "projectPath": "D:\\fpt\\B3W\\galaxy-cinema-booking\\Spring2025_SWD392_3W_Group1\\GalaxyBooking-BE\\BAL\\BAL.csproj",
-        "packagesPath": "C:\\Users\\truon\\.nuget\\packages\\",
-        "outputPath": "D:\\fpt\\B3W\\galaxy-cinema-booking\\Spring2025_SWD392_3W_Group1\\GalaxyBooking-BE\\BAL\\obj\\",
+        "projectPath": "D:\\fe2\\Spring2025_SWD392_3W_Group1\\GalaxyBooking-BE\\BAL\\BAL.csproj",
+        "packagesPath": "C:\\Users\\Vagabond\\.nuget\\packages\\",
+        "outputPath": "D:\\fe2\\Spring2025_SWD392_3W_Group1\\GalaxyBooking-BE\\BAL\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\truon\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Vagabond\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,14 +26,15 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\fpt\\B3W\\galaxy-cinema-booking\\Spring2025_SWD392_3W_Group1\\GalaxyBooking-BE\\DAL\\DAL.csproj": {
-                "projectPath": "D:\\fpt\\B3W\\galaxy-cinema-booking\\Spring2025_SWD392_3W_Group1\\GalaxyBooking-BE\\DAL\\DAL.csproj"
+              "D:\\fe2\\Spring2025_SWD392_3W_Group1\\GalaxyBooking-BE\\DAL\\DAL.csproj": {
+                "projectPath": "D:\\fe2\\Spring2025_SWD392_3W_Group1\\GalaxyBooking-BE\\DAL\\DAL.csproj"
               }
             }
           }
@@ -79,20 +80,20 @@
         }
       }
     },
-    "D:\\fpt\\B3W\\galaxy-cinema-booking\\Spring2025_SWD392_3W_Group1\\GalaxyBooking-BE\\DAL\\DAL.csproj": {
+    "D:\\fe2\\Spring2025_SWD392_3W_Group1\\GalaxyBooking-BE\\DAL\\DAL.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\fpt\\B3W\\galaxy-cinema-booking\\Spring2025_SWD392_3W_Group1\\GalaxyBooking-BE\\DAL\\DAL.csproj",
+        "projectUniqueName": "D:\\fe2\\Spring2025_SWD392_3W_Group1\\GalaxyBooking-BE\\DAL\\DAL.csproj",
         "projectName": "DAL",
-        "projectPath": "D:\\fpt\\B3W\\galaxy-cinema-booking\\Spring2025_SWD392_3W_Group1\\GalaxyBooking-BE\\DAL\\DAL.csproj",
-        "packagesPath": "C:\\Users\\truon\\.nuget\\packages\\",
-        "outputPath": "D:\\fpt\\B3W\\galaxy-cinema-booking\\Spring2025_SWD392_3W_Group1\\GalaxyBooking-BE\\DAL\\obj\\",
+        "projectPath": "D:\\fe2\\Spring2025_SWD392_3W_Group1\\GalaxyBooking-BE\\DAL\\DAL.csproj",
+        "packagesPath": "C:\\Users\\Vagabond\\.nuget\\packages\\",
+        "outputPath": "D:\\fe2\\Spring2025_SWD392_3W_Group1\\GalaxyBooking-BE\\DAL\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\truon\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Vagabond\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -101,6 +102,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
