@@ -77,7 +77,7 @@ namespace BAL.Services.Implement
         {
             var film = await _unitOfWork.FilmRepository.GetAsync(
                 filter: f => f.Id == id && !f.IsDeleted,
-                includeProperties: "FilmGenres");
+                includeProperties: "FilmGenres.Genre,Projections");
             if (film == null)
                 throw new Exception("Film not found or has been deleted");
 
