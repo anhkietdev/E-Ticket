@@ -1,6 +1,6 @@
 ## Application
 
-[Galaxy Cinema Booking Ticker ](galaxycinema.database.windows.net)
+[Galaxy Cinema Booking Ticker ](https://galaxycinema-a6eeaze9afbagaft.southeastasia-01.azurewebsites.net)
 
 ## Resources
 
