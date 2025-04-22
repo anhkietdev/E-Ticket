@@ -15,10 +15,10 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Production"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "https://localhost:7008;http://localhost:5086"
+      "applicationUrl": "https://galaxycinema-a6eeaze9afbagaft.southeastasia-01.azurewebsites.net/"
     },
     "IIS Express": {
       "commandName": "IISExpress",
