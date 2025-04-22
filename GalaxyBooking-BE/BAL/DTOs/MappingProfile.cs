@@ -76,6 +76,20 @@ namespace BAL.DTOs
                 .ForMember(dest => dest.Tickets, opt => opt.Ignore());
 
             CreateMap<Seat, SeatResponseDto>();
+            CreateMap<Seat, SeatDto>();
+
+            // Genre mappings
+            CreateMap<GenreRequestDto, Genre>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.DeletedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedBy, opt => opt.Ignore())
+                .ForMember(dest => dest.FilmGenres, opt => opt.Ignore());
+
+            CreateMap<Genre, GenreResponseDto>();
         }
     }
 }
