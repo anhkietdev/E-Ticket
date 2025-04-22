@@ -17,8 +17,9 @@ namespace Presentation.Controllers
             _filmService = filmService;
         }
 
+        // GET: api/film
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<FilmDto>>> GetAllFilms()
+        public async Task<IActionResult> GetAllFilms()
         {
             try
             {
@@ -27,12 +28,13 @@ namespace Presentation.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(400, $"{ex.Message}");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
+        // GET: api/film/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<FilmDto>> GetFilmById(Guid id)
+        public async Task<IActionResult> GetFilmById(Guid id)
         {
             try
             {
@@ -41,40 +43,55 @@ namespace Presentation.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(400, $"{ex.Message}");
+                if (ex.Message.Contains("not found or has been deleted"))
+                    return NotFound(ex.Message);
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
+        // POST: api/film
         [HttpPost]
-        public async Task<ActionResult<FilmDto>> CreateFilm([FromBody] FilmDto filmDto)
+        public async Task<IActionResult> CreateFilm([FromBody] FilmRequestDto filmDto)
         {
             try
             {
-                await _filmService.CreateAsync(filmDto);
-                return CreatedAtAction(nameof(GetFilmById), new { id = filmDto.Id }, filmDto);
+                var createdFilm = await _filmService.CreateAsync(filmDto);
+                return CreatedAtAction(nameof(GetFilmById), new { id = createdFilm.Id }, createdFilm);
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode(400, $"{ex.Message}");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
+        // PUT: api/film/{id}
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateFilm(Guid id, [FromBody] FilmDto filmDto)
+        public async Task<IActionResult> UpdateFilm(Guid id, [FromBody] FilmRequestDto filmDto)
         {
             try
             {
-                await _filmService.UpdateAsync(id, filmDto);
-                return NoContent();
+                var updatedFilm = await _filmService.UpdateAsync(id, filmDto);
+                return Ok(updatedFilm);
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode(400, $"{ex.Message}");
+                if (ex.Message.Contains("not found or has been deleted"))
+                    return NotFound(ex.Message);
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
+        // DELETE: api/film/{id}
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteFilm(Guid id)
+        public async Task<IActionResult> DeleteFilm(Guid id)
         {
             try
             {
@@ -83,12 +100,15 @@ namespace Presentation.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(400, $"{ex.Message}");
+                if (ex.Message.Contains("not found or has been deleted"))
+                    return NotFound(ex.Message);
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
+        // GET: api/film/paged
         [HttpGet("paged")]
-        public async Task<ActionResult<PagedDto<FilmDto>>> GetPagedFilms(
+        public async Task<IActionResult> GetPagedFilms(
             [FromQuery] int pageNumber = 1,
             [FromQuery] int pageSize = 10,
             [FromQuery] string? title = null,
@@ -102,40 +122,51 @@ namespace Presentation.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(400, $"{ex.Message}");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
+        // GET: api/film/by-title/{title}
         [HttpGet("by-title/{title}")]
-        public async Task<ActionResult<IEnumerable<FilmDto>>> FindFilmsByTitle(string title)
+        public async Task<IActionResult> FindFilmsByTitle(string title)
         {
             try
             {
                 var films = await _filmService.FindByTitleAsync(title);
                 return Ok(films);
             }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
             catch (Exception ex)
             {
-                return StatusCode(400, $"{ex.Message}");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
+        // GET: api/film/by-director/{director}
         [HttpGet("by-director/{director}")]
-        public async Task<ActionResult<IEnumerable<FilmDto>>> FindFilmsByDirector(string director)
+        public async Task<IActionResult> FindFilmsByDirector(string director)
         {
             try
             {
                 var films = await _filmService.FindByDirectorAsync(director);
                 return Ok(films);
             }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
             catch (Exception ex)
             {
-                return StatusCode(400, $"{ex.Message}");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
+        // GET: api/film/by-release-date
         [HttpGet("by-release-date")]
-        public async Task<ActionResult<IEnumerable<FilmDto>>> FindFilmsByReleaseDate([FromQuery] DateTime releaseDate)
+        public async Task<IActionResult> FindFilmsByReleaseDate([FromQuery] DateTime releaseDate)
         {
             try
             {
@@ -144,7 +175,7 @@ namespace Presentation.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(400, $"{ex.Message}");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
     }

@@ -22,17 +22,25 @@ namespace BAL.Services.Implement
             _mapper = mapper;
         }
 
-        public async Task CreateAsync(FilmDto filmDto)
+        public async Task<FilmResponseDto> CreateAsync(FilmRequestDto filmDto)
         {
             if (filmDto == null)
                 throw new ArgumentNullException(nameof(filmDto));
 
             var film = _mapper.Map<Film>(filmDto);
+            film.Id = Guid.NewGuid();
+            film.IsDeleted = false;
+            film.CreatedAt = DateTime.Now;
+            film.UpdatedAt = DateTime.Now;
+            film.DeletedAt = null;
+
             await _unitOfWork.FilmRepository.AddAsync(film);
             await _unitOfWork.SaveAsync();
+
+            return _mapper.Map<FilmResponseDto>(film);
         }
 
-        public async Task UpdateAsync(Guid id, FilmDto filmDto)
+        public async Task<FilmResponseDto> UpdateAsync(Guid id, FilmRequestDto filmDto)
         {
             var film = await _unitOfWork.FilmRepository.GetAsync(
                 f => f.Id == id && !f.IsDeleted,
@@ -41,8 +49,12 @@ namespace BAL.Services.Implement
                 throw new Exception("Film not found or has been deleted");
 
             _mapper.Map(filmDto, film);
+            film.UpdatedAt = DateTime.Now;
+
             await _unitOfWork.FilmRepository.UpdateAsync(film);
             await _unitOfWork.SaveAsync();
+
+            return _mapper.Map<FilmResponseDto>(film);
         }
 
         public async Task DeleteAsync(Guid id)
@@ -53,11 +65,15 @@ namespace BAL.Services.Implement
             if (film == null)
                 throw new Exception("Film not found or has been deleted");
 
-            await _unitOfWork.FilmRepository.RemoveAsync(film);
+            film.IsDeleted = true;
+            film.DeletedAt = DateTime.Now;
+            film.UpdatedAt = DateTime.Now;
+
+            await _unitOfWork.FilmRepository.UpdateAsync(film);
             await _unitOfWork.SaveAsync();
         }
 
-        public async Task<FilmDto> GetByIdAsync(Guid id)
+        public async Task<FilmResponseDto> GetByIdAsync(Guid id)
         {
             var film = await _unitOfWork.FilmRepository.GetAsync(
                 filter: f => f.Id == id && !f.IsDeleted,
@@ -65,10 +81,10 @@ namespace BAL.Services.Implement
             if (film == null)
                 throw new Exception("Film not found or has been deleted");
 
-            return _mapper.Map<FilmDto>(film);
+            return _mapper.Map<FilmResponseDto>(film);
         }
 
-        public async Task<PagedDto<FilmDto>> GetPagingAsync(
+        public async Task<PagedDto<FilmResponseDto>> GetPagingAsync(
             int pageNumber,
             int pageSize,
             string? title = null,
@@ -89,40 +105,40 @@ namespace BAL.Services.Implement
                 pageSize: pageSize);
 
             var totalItems = await _unitOfWork.FilmRepository.CountAsync(filter);
-            var filmDtos = _mapper.Map<ICollection<FilmDto>>(films);
-            return new PagedDto<FilmDto>(pageNumber, pageSize, totalItems, filmDtos);
+            var filmDtos = _mapper.Map<ICollection<FilmResponseDto>>(films);
+            return new PagedDto<FilmResponseDto>(pageNumber, pageSize, totalItems, filmDtos);
         }
 
-        public async Task<IEnumerable<FilmDto>> GetFilmsAsync()
+        public async Task<IEnumerable<FilmResponseDto>> GetFilmsAsync()
         {
             var films = await _unitOfWork.FilmRepository.GetAllAsync(
                 filter: f => !f.IsDeleted,
-                includeProperties: "FilmGenres");
-            return _mapper.Map<IEnumerable<FilmDto>>(films);
+                includeProperties: "FilmGenres.Genre,Projections");
+            return _mapper.Map<IEnumerable<FilmResponseDto>>(films);
         }
 
-        public async Task<IEnumerable<FilmDto>> FindByTitleAsync(string title)
+        public async Task<IEnumerable<FilmResponseDto>> FindByTitleAsync(string title)
         {
             if (string.IsNullOrWhiteSpace(title))
-                return Enumerable.Empty<FilmDto>();
+                return Enumerable.Empty<FilmResponseDto>();
 
             var films = await _unitOfWork.FilmRepository.GetFilmsByTitleAsync(title);
-            return _mapper.Map<IEnumerable<FilmDto>>(films);
+            return _mapper.Map<IEnumerable<FilmResponseDto>>(films);
         }
 
-        public async Task<IEnumerable<FilmDto>> FindByDirectorAsync(string director)
+        public async Task<IEnumerable<FilmResponseDto>> FindByDirectorAsync(string director)
         {
             if (string.IsNullOrWhiteSpace(director))
-                return Enumerable.Empty<FilmDto>();
+                return Enumerable.Empty<FilmResponseDto>();
 
             var films = await _unitOfWork.FilmRepository.GetFilmsByDirectorAsync(director);
-            return _mapper.Map<IEnumerable<FilmDto>>(films);
+            return _mapper.Map<IEnumerable<FilmResponseDto>>(films);
         }
 
-        public async Task<IEnumerable<FilmDto>> FindByReleaseDateAsync(DateTime releaseDate)
+        public async Task<IEnumerable<FilmResponseDto>> FindByReleaseDateAsync(DateTime releaseDate)
         {
             var films = await _unitOfWork.FilmRepository.GetFilmsByReleaseDateAsync(releaseDate);
-            return _mapper.Map<IEnumerable<FilmDto>>(films);
+            return _mapper.Map<IEnumerable<FilmResponseDto>>(films);
         }
     }
 }

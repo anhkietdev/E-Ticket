@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace BAL.DTOs
 {
-    public class ProjectionDto
+    public class ProjectionRequestDto
     {
-        public Guid Id { get; set; }
         public DateTime StartTime { get; set; }
 
         public DateTime EndTime { get; set; }
@@ -18,12 +17,6 @@ namespace BAL.DTOs
 
         public Guid FilmId { get; set; }
 
-        public virtual Film Film { get; set; }
-
         public Guid RoomId { get; set; }
-
-        public virtual Room Room { get; set; }
-
-        public virtual ICollection<Ticket> Tickets { get; set; }
     }
 }
