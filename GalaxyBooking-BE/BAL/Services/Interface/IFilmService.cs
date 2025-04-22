@@ -1,24 +1,27 @@
 ﻿using BAL.DTOs;
 using DAL.Models;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BAL.Services.Interface
 {
     public interface IFilmService
     {
-        Task CreateAsync(FilmDto filmDto);
-        Task UpdateAsync(Guid id, FilmDto filmDto);
+        Task<FilmResponseDto> CreateAsync(FilmRequestDto filmDto);
+        Task<FilmResponseDto> UpdateAsync(Guid id, FilmRequestDto filmDto);
         Task DeleteAsync(Guid id);
-        Task<FilmDto> GetByIdAsync(Guid id);
-        Task<PagedDto<FilmDto>> GetPagingAsync(
+        Task<FilmResponseDto> GetByIdAsync(Guid id);
+        Task<PagedDto<FilmResponseDto>> GetPagingAsync(
             int pageNumber,
             int pageSize,
             string? title = null,
             string? director = null,
             DateTime? releaseDate = null
         );
-        Task<IEnumerable<FilmDto>> GetFilmsAsync();
-        Task<IEnumerable<FilmDto>> FindByTitleAsync(string title);
-        Task<IEnumerable<FilmDto>> FindByDirectorAsync(string director);
-        Task<IEnumerable<FilmDto>> FindByReleaseDateAsync(DateTime releaseDate);
+        Task<IEnumerable<FilmResponseDto>> GetFilmsAsync();
+        Task<IEnumerable<FilmResponseDto>> FindByTitleAsync(string title);
+        Task<IEnumerable<FilmResponseDto>> FindByDirectorAsync(string director);
+        Task<IEnumerable<FilmResponseDto>> FindByReleaseDateAsync(DateTime releaseDate);
     }
 }
