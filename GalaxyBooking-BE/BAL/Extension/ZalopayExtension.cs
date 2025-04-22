@@ -9,22 +9,23 @@ namespace BAL.Extension
     {
         public static void MakeSignature(this CreateZalopayRequest request, string key)
         {
-            var data = $"{request.AppId}|{request.AppTransId}|{request.AppUser}|{request.Amount}|{request.AppTime}||";
+            var data = $"{request.AppId}|{request.AppTransId}|{request.AppUser}|{request.Amount}|{request.AppTime}|{request.EmbedData}|";
             request.Mac = HashHelper.HmacSha256(key, data);
         }
 
         public static Dictionary<string, string> GetContent(this CreateZalopayRequest request)
         {
             Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
-            keyValuePairs.Add("app_id", request.AppId.ToString());
-            keyValuePairs.Add("app_user", request.AppUser.ToString());
-            keyValuePairs.Add("app_time", request.AppTime.ToString());
+            keyValuePairs.Add("appid", request.AppId.ToString());
+            keyValuePairs.Add("appuser", request.AppUser.ToString());
+            keyValuePairs.Add("apptime", request.AppTime.ToString());
             keyValuePairs.Add("amount", request.Amount.ToString());
-            keyValuePairs.Add("app_trans_id", request.AppTransId);
+            keyValuePairs.Add("apptransid", request.AppTransId);
             keyValuePairs.Add("description", request.Description);
-            keyValuePairs.Add("bank_code", "zalopayapp");
+            keyValuePairs.Add("bankcode", "zalopayapp");
+            keyValuePairs.Add("embeddata", request.EmbedData);
             keyValuePairs.Add("mac", request.Mac);
-            keyValuePairs.Add("callback_url", "localhost:7008/Zalopay/Callback");
+            keyValuePairs.Add("callbackurl", request.ReturnUrl);
 
             return keyValuePairs;
         }

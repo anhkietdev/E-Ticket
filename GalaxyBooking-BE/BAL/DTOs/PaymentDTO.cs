@@ -6,5 +6,6 @@
         public string PaymentCurrency { get; set; } = string.Empty;
         public string PaymentRefId { get; set; } = string.Empty;
         public decimal? RequiredAmount { get; set; }
+        public string? BankCode { get; set; }
     }
 }

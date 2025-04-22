@@ -7,6 +7,7 @@ using BAL.Services.ZaloPay.Request;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using System.Dynamic;
 
 namespace BAL.Services.Implement
 {
@@ -41,6 +42,9 @@ namespace BAL.Services.Implement
         public async Task<string> CreateZalopayPayment(PaymentDTO request)
         {
             //todo add expandoobj for embeded data
+            var embedData = new ExpandoObject() as IDictionary<string, object>;
+            embedData["redirecturl"] = _zaloPayConfig.RedirectUrl.ToString();
+
             var zalopayRequest = new CreateZalopayRequest
             {
                 AppId = _zaloPayConfig.AppId,
@@ -49,6 +53,9 @@ namespace BAL.Services.Implement
                 Amount = (long)request.RequiredAmount,
                 AppTransId = DateTime.Now.ToString("yymmdd"),
                 Description = request.PaymentContent,
+                EmbedData = JsonConvert.SerializeObject(embedData).ToString(),
+                ReturnUrl = _zaloPayConfig.RedirectUrl,
+                BankCode = request.BankCode
             };
             zalopayRequest.MakeSignature(_zaloPayConfig.Key1);
             (bool createZaloPayLinkResult, string createZaloPayMessage) = zalopayRequest.GetLink(_zaloPayConfig.PaymentUrl);
