@@ -1,9 +1,6 @@
 ﻿using BAL.DTOs.ZaloPay;
-using BAL.Helpers;
 using BAL.Services.Interface;
-using BAL.Services.ZaloPay.Request;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace Presentation.Controllers
 {
