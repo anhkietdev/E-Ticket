@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { authService } from '../services/api';
+import authService from '../services/authService'; // Changed to default import
 
 const AuthContext = createContext();
 
@@ -19,8 +19,8 @@ export const AuthProvider = ({ children }) => {
           setCurrentUser(response.data);
         }
       } catch (err) {
-        console.error('Failed to load user', err);
-        setError('Failed to authenticate user. Please login again.');
+        console.error('Không thể tải thông tin người dùng:', err);
+        setError('Không thể xác thực người dùng. Vui lòng đăng nhập lại.');
         localStorage.removeItem('token');
         localStorage.removeItem('userId');
       } finally {
@@ -33,42 +33,32 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      // Giả lập đăng nhập vì chúng ta đang sử dụng JSON Server
-      const response = await authService.login({ email, password });
-      // Giả sử phản hồi bao gồm token và user data
-      const { token, user } = response.data;
-      
-      localStorage.setItem('token', token);
-      localStorage.setItem('userId', user.id);
+      const { user, token } = await authService.login({ email, password });
       setCurrentUser(user);
       setError(null);
       return user;
     } catch (err) {
-      setError('Invalid email or password');
+      setError(err.message || 'Email hoặc mật khẩu không đúng');
       throw err;
     }
   };
 
   const register = async (userData) => {
     try {
-      const response = await authService.register(userData);
-      const { token, user } = response.data;
-      
-      localStorage.setItem('token', token);
-      localStorage.setItem('userId', user.id);
+      const { user, token } = await authService.register(userData);
       setCurrentUser(user);
       setError(null);
       return user;
     } catch (err) {
-      setError('Registration failed');
+      setError(err.message || 'Đăng ký thất bại');
       throw err;
     }
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userId');
+    authService.logout();
     setCurrentUser(null);
+    setError(null);
   };
 
   const value = {
