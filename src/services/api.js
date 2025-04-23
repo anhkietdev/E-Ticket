@@ -29,6 +29,10 @@ export const movieService = {
   getUpcoming: () => api.get('/Film?releaseDate_gt=2025-04-17'),
 };
 
+export const cinemaService = {
+  getAll: () => api.get('/cinemas'),
+  getById: (id) => api.get(`/cinemas/${id}`),
+};
 
 export const showTimeService = {
   getAll: () => api.get('/showTimes'),

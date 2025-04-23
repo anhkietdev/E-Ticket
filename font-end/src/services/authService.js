@@ -1,74 +1,58 @@
-// src/services/authService.js
 import api from './api';
 
 const authService = {
-  login: (credentials) => {
-    // Để giả lập đăng nhập với JSON Server
-    return api.get(`/users?email=${credentials.email}`).then(response => {
-      const users = response.data;
-      if (users.length > 0 && users[0].password === credentials.password) {
-        // Giả lập tạo token
-        const user = users[0];
-        const token = btoa(JSON.stringify({userId: user.id, email: user.email}));
-        
-        // Trả về dạng giống response từ API auth thực tế
-        return {
-          data: {
-            user: {
-              id: user.id,
-              name: user.name,
-              email: user.email,
-              phone: user.phone
-            },
-            token
-          }
-        };
+  login: async (credentials) => {
+    try {
+      const response = await api.post('/Authentication/login', credentials);
+      const { token, user } = response.data;
+
+      if (!token || !user) {
+        throw new Error('Invalid response from server');
       }
-      throw new Error('Invalid credentials');
-    });
-  },
-  
-  register: (userData) => {
-    // Kiểm tra email đã tồn tại
-    return api.get(`/users?email=${userData.email}`).then(response => {
-      const users = response.data;
-      if (users.length > 0) {
-        throw new Error('Email already exists');
-      }
-      
-      // Tạo user mới
-      return api.post('/users', userData).then(response => {
-        const user = response.data;
-        const token = btoa(JSON.stringify({userId: user.id, email: user.email}));
-        
-        return {
-          data: {
-            user: {
-              id: user.id,
-              name: user.name,
-              email: user.email,
-              phone: user.phone
-            },
-            token
-          }
-        };
-      });
-    });
-  },
-  
-  getCurrentUser: () => {
-    const userId = localStorage.getItem('userId');
-    if (userId) {
-      return api.get(`/users/${userId}`);
+
+      localStorage.setItem('token', token);
+      localStorage.setItem('userId', user.id);
+      return { token, user };
+    } catch (error) {
+      throw new Error(error.response?.data || 'Đăng nhập thất bại');
     }
-    return Promise.reject('No user logged in');
   },
-  
+
+  register: async (userData) => {
+    try {
+      const response = await api.post('/Authentication/register', userData);
+      const { token, user } = response.data;
+
+      if (!token || !user) {
+        throw new Error('Invalid response from server');
+      }
+
+      localStorage.setItem('token', token);
+      localStorage.setItem('userId', user.id);
+      return { token, user };
+    } catch (error) {
+      throw new Error(error.response?.data || 'Đăng ký thất bại');
+    }
+  },
+
+  getCurrentUser: async () => {
+    try {
+      const userId = localStorage.getItem('userId');
+      if (!userId) {
+        throw new Error('Không có người dùng đăng nhập');
+      }
+      const response = await api.get(`/users/${userId}`);
+      return response;
+    } catch (error) {
+      throw new Error('Không thể lấy thông tin người dùng');
+    }
+  },
+
   logout: () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
     return Promise.resolve();
-  }
+  },
 };
 
 export default authService;

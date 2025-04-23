@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { movieService } from './api';
-import MovieCard from './MovieCard';
+import { movieService } from './api'; // Import movieService từ api.js
+import MovieCard from './MovieCard'; // Import MovieCard đã cung cấp
 
+// Styled components cho giao diện
 const Container = styled.div`
   padding: 20px;
   max-width: 1200px;
@@ -52,9 +53,8 @@ const MovieList = () => {
     const fetchFilms = async () => {
       try {
         const response = await movieService.getAll();
-        console.log('Dữ liệu phim từ API:', response.data);
+        // Lọc các phim không bị xóa (isDeleted: false)
         const activeFilms = response.data.filter(film => !film.isDeleted);
-        console.log('Danh sách phim sau khi lọc:', activeFilms);
         setFilms(activeFilms);
         setLoading(false);
       } catch (err) {

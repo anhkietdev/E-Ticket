@@ -173,43 +173,15 @@ const MovieDetail = () => {
   useEffect(() => {
     const fetchMovie = async () => {
       try {
-        console.log('Bắt đầu gọi API với ID:', id);
         const response = await movieService.getById(id);
-        console.log('Phản hồi API gốc:', response);
-        console.log('Dữ liệu phim:', response.data);
-        if (!response.data) {
-          throw new Error('Dữ liệu phim rỗng');
-        }
         setMovie(response.data);
         setLoading(false);
       } catch (err) {
-        console.error('Chi tiết lỗi:', err);
-        let errorMessage = 'Không thể tải thông tin phim. Vui lòng thử lại.';
-        if (err.message === 'ID phim không hợp lệ') {
-          errorMessage = 'ID phim không hợp lệ. Vui lòng kiểm tra lại.';
-        } else if (err.response?.status === 404) {
-          errorMessage = 'Phim không tồn tại hoặc đã bị xóa.';
-        } else if (err.response?.status === 401) {
-          errorMessage = 'Không có quyền truy cập. Vui lòng đăng nhập lại.';
-        } else if (err.response?.status === 403) {
-          errorMessage = 'Bạn không có quyền truy cập tài nguyên này.';
-        } else if (err.message === 'Dữ liệu phim rỗng') {
-          errorMessage = 'Không tìm thấy thông tin phim.';
-        } else if (err.response) {
-          errorMessage = `Lỗi từ server: ${err.response.status} - ${err.response.statusText}`;
-        } else if (err.request) {
-          errorMessage = 'Không nhận được phản hồi từ server. Vui lòng kiểm tra kết nối.';
-        }
-        setError(errorMessage);
+        setError('Không thể tải thông tin phim. Vui lòng thử lại.');
         setLoading(false);
+        console.error('Lỗi khi gọi API:', err);
       }
     };
-
-    if (!id) {
-      setError('ID phim không hợp lệ.');
-      setLoading(false);
-      return;
-    }
 
     fetchMovie();
   }, [id]);
@@ -230,47 +202,51 @@ const MovieDetail = () => {
     return <ErrorMessage>Không tìm thấy thông tin phim.</ErrorMessage>;
   }
 
-  // Xử lý filmGenres để hỗ trợ cả mảng string và mảng object
-  const displayGenres = Array.isArray(movie.filmGenres)
-    ? movie.filmGenres.map(item => {
-        // Nếu item là object với cấu trúc { genre: { name: "..." } }
-        if (item && typeof item === 'object' && item.genre && item.genre.name) {
-          return item.genre.name;
-        }
-        // Nếu item là string
-        return item;
-      }).filter(name => name) // Loại bỏ các giá trị không hợp lệ (null, undefined)
-    : [];
+  // Xử lý thể loại phim
+  let displayGenres = [];
+  if (movie.filmGenres && Array.isArray(movie.filmGenres)) {
+    displayGenres = movie.filmGenres;
+  } else if (typeof movie.filmGenres === 'string') {
+    displayGenres = movie.filmGenres.split(',').map(g => g.trim());
+  }
 
+  // Xử lý các giá trị mặc định cho các trường có thể null
   const displayTitle = movie.title || 'Không có tiêu đề';
   const displayDescription = movie.description || 'Không có mô tả';
   const displayDirector = movie.director || 'Không có thông tin';
-  const displayImageUrl = movie.imageURL || 'https://via.placeholder.com/300x450?text=No+Image';
+  const displayImageUrl = movie.imageUrl || 'https://via.placeholder.com/300x450?text=No+Image';
   const displayDuration = movie.duration ? `${Math.floor(movie.duration / 60)}h ${movie.duration % 60}m` : 'Không có thông tin';
   const displayReleaseDate = movie.releaseDate ? format(new Date(movie.releaseDate), 'dd/MM/yyyy') : 'Không có thông tin';
-  const displayTrailerUrl = movie.trailerURL || '';
 
   return (
     <Container>
       <PosterContainer>
-        <Poster src={displayImageUrl} alt={displayTitle} />
+        <Poster
+          src={displayImageUrl}
+          alt={displayTitle}
+        />
       </PosterContainer>
+      
       <Content>
         <Title>{displayTitle}</Title>
+        
         <InfoGrid>
           <InfoItem>
             <InfoIcon><FaClock /></InfoIcon>
             <div>{displayDuration}</div>
           </InfoItem>
+          
           <InfoItem>
             <InfoIcon><FaCalendarAlt /></InfoIcon>
             <div>{displayReleaseDate}</div>
           </InfoItem>
+          
           <InfoItem>
             <InfoIcon>Đạo diễn:</InfoIcon>
             <div>{displayDirector}</div>
           </InfoItem>
         </InfoGrid>
+        
         <GenresContainer>
           {displayGenres.length > 0 ? (
             displayGenres.map((genre, index) => (
@@ -280,22 +256,29 @@ const MovieDetail = () => {
             <GenreBadge>Không có thể loại</GenreBadge>
           )}
         </GenresContainer>
+        
         <Description>{displayDescription}</Description>
+        
         <ButtonContainer>
-          <Button as="button" variant="primary" size="large" onClick={handleBookTicket}>
+          <Button 
+            as="button" // Sử dụng as="button" vì đây không phải liên kết
+            variant="primary" 
+            size="large" 
+            onClick={handleBookTicket}
+          >
             Đặt vé ngay
           </Button>
-          {displayTrailerUrl && (
-            <Button
-              variant="outline"
-              size="large"
-              href={displayTrailerUrl}
-              target="_blank"
-            >
-              Xem trailer
-            </Button>
-          )}
+          
+          <Button
+            variant="outline"
+            size="large"
+            to={`https://www.youtube.com/results?search_query=${encodeURIComponent(displayTitle + ' trailer')}`}
+            target="_blank"
+          >
+            Xem trailer
+          </Button>
         </ButtonContainer>
+        
         <BackButton to="/movies">Quay lại danh sách phim</BackButton>
       </Content>
     </Container>

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import authService from '../services/authService'; // Changed to default import
+import { authService } from '../services/api';
 
 const AuthContext = createContext();
 
@@ -19,8 +19,8 @@ export const AuthProvider = ({ children }) => {
           setCurrentUser(response.data);
         }
       } catch (err) {
-        console.error('Không thể tải thông tin người dùng:', err);
-        setError('Không thể xác thực người dùng. Vui lòng đăng nhập lại.');
+        console.error('Failed to load user', err);
+        setError('Failed to authenticate user. Please login again.');
         localStorage.removeItem('token');
         localStorage.removeItem('userId');
       } finally {
@@ -33,32 +33,42 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const { user, token } = await authService.login({ email, password });
+      // Giả lập đăng nhập vì chúng ta đang sử dụng JSON Server
+      const response = await authService.login({ email, password });
+      // Giả sử phản hồi bao gồm token và user data
+      const { token, user } = response.data;
+      
+      localStorage.setItem('token', token);
+      localStorage.setItem('userId', user.id);
       setCurrentUser(user);
       setError(null);
       return user;
     } catch (err) {
-      setError(err.message || 'Email hoặc mật khẩu không đúng');
+      setError('Invalid email or password');
       throw err;
     }
   };
 
   const register = async (userData) => {
     try {
-      const { user, token } = await authService.register(userData);
+      const response = await authService.register(userData);
+      const { token, user } = response.data;
+      
+      localStorage.setItem('token', token);
+      localStorage.setItem('userId', user.id);
       setCurrentUser(user);
       setError(null);
       return user;
     } catch (err) {
-      setError(err.message || 'Đăng ký thất bại');
+      setError('Registration failed');
       throw err;
     }
   };
 
   const logout = () => {
-    authService.logout();
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
     setCurrentUser(null);
-    setError(null);
   };
 
   const value = {
