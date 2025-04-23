@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.SqlServer;
 var builder = WebApplication.CreateBuilder(args);
 
 
-// Add services to the container
+// Add services to the container 
 ConfigureServices(builder.Services, builder.Configuration);
 
 builder.Services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
