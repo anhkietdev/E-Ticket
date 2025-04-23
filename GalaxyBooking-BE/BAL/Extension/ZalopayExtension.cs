@@ -9,7 +9,7 @@ namespace BAL.Extension
     {
         public static void MakeSignature(this CreateZalopayRequest request, string key)
         {
-            var data = $"{request.AppId}|{request.AppTransId}|{request.AppUser}|{request.Amount}|{request.AppTime}|{request.EmbedData}|";
+            var data = $"{request.AppId}|{request.AppTransId}|{request.AppUser}|{request.Amount}|{request.AppTime}|{request.EmbedData}|{request.Item}";
             request.Mac = HashHelper.HmacSha256(key, data);
         }
 
@@ -26,6 +26,7 @@ namespace BAL.Extension
             keyValuePairs.Add("embeddata", request.EmbedData);
             keyValuePairs.Add("mac", request.Mac);
             keyValuePairs.Add("callbackurl", request.CallbackUrl);
+            keyValuePairs.Add("item", request.Item);
 
             return keyValuePairs;
         }
