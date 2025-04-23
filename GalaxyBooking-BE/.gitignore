@@ -397,8 +397,8 @@ FodyWeavers.xsd
 *.msp
 
 #obj files and appsetting.Development.json
-appsettings.development.json
-appsettings*.json
+# appsettings.development.json
+# appsettings*.json
 **/bin/
 **/obj/
 

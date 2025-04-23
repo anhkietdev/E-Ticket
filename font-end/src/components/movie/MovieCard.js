@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { FaStar, FaClock } from 'react-icons/fa';
+import { FaClock } from 'react-icons/fa';
 
 const Card = styled.div`
   background: #16213e;
@@ -105,37 +105,39 @@ const GenresContainer = styled.div`
 `;
 
 const MovieCard = ({ movie }) => {
-  // Chuyển đổi thể loại nếu là chuỗi hoặc null
-  let displayGenres = [];
+  console.log('Dữ liệu phim trong MovieCard:', movie);
 
+  let displayGenres = [];
   if (movie.filmGenres && Array.isArray(movie.filmGenres)) {
-    displayGenres = movie.filmGenres.slice(0, 2);
-  } else if (typeof movie.filmGenres === 'string') {
-    displayGenres = movie.filmGenres.split(',').map(g => g.trim()).slice(0, 2);
+    displayGenres = movie.filmGenres
+      .map(genre => genre.name) // Lấy thuộc tính name
+      .filter(name => name) // Loại bỏ giá trị rỗng
+      .slice(0, 2); // Giới hạn 2 thể loại
   }
 
   return (
     <Card>
       <PosterContainer>
         <Poster
-          src={movie.imageUrl || 'https://via.placeholder.com/300x450?text=No+Image'}
+          src={movie.imageURL || 'https://via.placeholder.com/300x450?text=No+Image'}
           alt={movie.title}
         />
       </PosterContainer>
       <Content>
-        <Title>{movie.title}</Title>
-
+        <Title>{movie.title || 'Không có tiêu đề'}</Title>
         <InfoRow>
           <InfoIcon><FaClock /></InfoIcon>
-          {Math.floor(movie.duration / 60)}h {movie.duration % 60}m
+          {movie.duration ? `${Math.floor(movie.duration / 60)}h ${movie.duration % 60}m` : 'N/A'}
         </InfoRow>
-
         <GenresContainer>
-          {displayGenres.map((genre, index) => (
-            <GenreBadge key={index}>{genre}</GenreBadge>
-          ))}
+          {displayGenres.length > 0 ? (
+            displayGenres.map((genre, index) => (
+              <GenreBadge key={index}>{genre}</GenreBadge>
+            ))
+          ) : (
+            <GenreBadge>Không có thể loại</GenreBadge>
+          )}
         </GenresContainer>
-
         <BookButton to={`/movies/${movie.id}`}>
           Chi tiết & Đặt vé
         </BookButton>

@@ -13,7 +13,13 @@ namespace BAL.DTOs
         public string RoomNumber { get; set; }
         public RoomType Type { get; set; }
         public int Capacity { get; set; }
-        public virtual ICollection<Seat> Seats { get; set; }
-        public virtual ICollection<Projection> Projections { get; set; }
+        public virtual ICollection<SeatDto> Seats { get; set; }
+        public virtual ICollection<ProjectionDto> Projections { get; set; }
+    }
+
+    public class SeatDto
+    {
+        public required string SeatNumber { get; set; }
+        public required string Row { get; set; }
     }
 }
