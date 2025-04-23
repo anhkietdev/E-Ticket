@@ -120,12 +120,8 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
 // Configure Pipeline
 void ConfigurePipeline(WebApplication app)
 {
-    // Development-specific middleware
-    if (app.Environment.IsDevelopment())
-    {
-        app.UseSwagger();
-        app.UseSwaggerUI();
-    }
+    app.UseSwagger();
+    app.UseSwaggerUI();
 
     // Global middleware
     app.UseCors("AllowAll");
