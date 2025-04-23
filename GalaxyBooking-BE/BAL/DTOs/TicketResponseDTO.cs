@@ -6,5 +6,7 @@
         public List<Guid> SeatIds { get; set; }
         public Guid RoomId { get; set; }
         public Guid ProjectionId { get; set; }
+        public string RedirectUrl { get; set; }
+        public decimal TotalPrice { get; set; }
     }
 }

@@ -7,6 +7,5 @@
         public Guid RoomId { get; set; }
         public Guid ProjectionId { get; set; }
         public Guid UserId { get; set; }
-        public decimal Price { get; set; }
     }
 }

@@ -7,5 +7,8 @@
         public string PaymentRefId { get; set; } = string.Empty;
         public decimal? RequiredAmount { get; set; }
         public string? BankCode { get; set; }
+        public Guid? UserId { get; set; }
+        public List<Guid> TicketIds { get; set; }
+        public Guid? ProjectionId { get; set; }
     }
 }
