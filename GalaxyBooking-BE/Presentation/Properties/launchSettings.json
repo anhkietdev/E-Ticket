@@ -10,7 +10,7 @@
       "dotnetRunMessages": true,
       "applicationUrl": "http://localhost:5086"
     },
-    "https": {
+    "SWD392_Production": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "swagger",
