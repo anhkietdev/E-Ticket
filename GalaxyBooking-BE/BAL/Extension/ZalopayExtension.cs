@@ -25,7 +25,7 @@ namespace BAL.Extension
             keyValuePairs.Add("bankcode", "zalopayapp");
             keyValuePairs.Add("embeddata", request.EmbedData);
             keyValuePairs.Add("mac", request.Mac);
-            keyValuePairs.Add("callbackurl", request.ReturnUrl);
+            keyValuePairs.Add("callbackurl", request.CallbackUrl);
 
             return keyValuePairs;
         }

@@ -69,7 +69,8 @@ namespace BAL.Services.Implement
                 Description = request.PaymentContent,
                 EmbedData = JsonConvert.SerializeObject(embedData).ToString(),
                 ReturnUrl = _zaloPayConfig.RedirectUrl,
-                BankCode = request.BankCode
+                BankCode = request.BankCode,
+                CallbackUrl = _zaloPayConfig.CallbackUrl,
             };
             zalopayRequest.MakeSignature(_zaloPayConfig.Key1);
             (bool createZaloPayLinkResult, string createZaloPayMessage) = zalopayRequest.GetLink(_zaloPayConfig.PaymentUrl);
