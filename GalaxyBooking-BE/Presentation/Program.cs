@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.SqlServer;
 
 var builder = WebApplication.CreateBuilder(args);
 
-<<<<<<< HEAD
+
 // Add services to the container
 ConfigureServices(builder.Services, builder.Configuration);
 =======
