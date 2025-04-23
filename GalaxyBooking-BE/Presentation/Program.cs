@@ -14,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
 ConfigureServices(builder.Services, builder.Configuration);
-=======
+
 builder.Services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IProjectionService, ProjectionService>();
@@ -53,7 +53,7 @@ builder.Services.AddControllers().AddJsonOptions(o =>
 {
     o.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
 });
->>>>>>> 9c1e0caa45e7c515fc0544c51325c3c25e678938
+
 
 var app = builder.Build();
 
