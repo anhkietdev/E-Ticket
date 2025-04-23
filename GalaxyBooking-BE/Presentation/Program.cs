@@ -21,6 +21,7 @@ builder.Services.AddScoped<IProjectionService, ProjectionService>();
 builder.Services.AddScoped<IRoomService, RoomService>();
 builder.Services.AddScoped<ISeatService, SeatService>();
 builder.Services.AddScoped<IGenreService, GenreService>();
+builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

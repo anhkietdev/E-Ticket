@@ -1,7 +1,4 @@
-﻿using BAL.Helpers;
-using BAL.Services.ZaloPay.Response;
-using Newtonsoft.Json;
-namespace BAL.Services.ZaloPay.Request
+﻿namespace BAL.Services.ZaloPay.Request
 {
     public class CreateZalopayRequest
     {
