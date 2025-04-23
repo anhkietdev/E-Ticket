@@ -1,4 +1,6 @@
-﻿namespace BAL.DTOs
+﻿using BAL.Services.ZaloPay.Request;
+
+namespace BAL.DTOs
 {
     public class PaymentDTO
     {
@@ -10,5 +12,6 @@
         public Guid? UserId { get; set; }
         public List<Guid> TicketIds { get; set; }
         public Guid? ProjectionId { get; set; }
+        public List<Item> Items { get; set; }
     }
 }

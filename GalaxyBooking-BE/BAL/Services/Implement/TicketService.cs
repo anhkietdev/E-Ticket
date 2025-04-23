@@ -1,5 +1,6 @@
 ﻿using BAL.DTOs;
 using BAL.Services.Interface;
+using BAL.Services.ZaloPay.Request;
 using DAL.Models;
 using DAL.Repository.Interface;
 
@@ -59,6 +60,15 @@ namespace BAL.Services.Implement
             await _unitOfWork.SeatRepository.UpdateRange(seatLst);
             await _unitOfWork.SaveAsync();
 
+            List<Item> itemLst = new List<Item>();
+
+            foreach (var ticket in ticketLst)
+            {
+                Item item = new Item();
+                item.ItemId = ticket.Id;
+                itemLst.Add(item);
+            }
+
             var requestZaloPay = new PaymentDTO
             {
                 UserId = request.UserId,
@@ -67,7 +77,9 @@ namespace BAL.Services.Implement
                 PaymentRefId = $"Cine-{Guid.NewGuid()}",
                 RequiredAmount = totalPrice,
                 BankCode = "zalopayapp",
-                TicketIds = ticketLst.Select(x => x.Id).ToList()
+                TicketIds = ticketLst.Select(x => x.Id).ToList(),
+                ProjectionId = request.ProjectionId,
+                Items = itemLst
             };
 
             (bool returnStatus, string message) = await _zaloPayService.CreateZalopayPayment(requestZaloPay);
