@@ -1,5 +1,7 @@
-﻿using BAL.DTOs;
+﻿using AutoMapper;
+using BAL.DTOs;
 using BAL.Services.Interface;
+using BAL.Services.ZaloPay.Request;
 using DAL.Models;
 using DAL.Repository.Interface;
 
@@ -9,14 +11,17 @@ namespace BAL.Services.Implement
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IZaloPayService _zaloPayService;
-        public TicketService(IUnitOfWork unitOfWork, IZaloPayService zaloPayService)
+        private readonly IMapper _mapper;
+        public TicketService(IUnitOfWork unitOfWork, IZaloPayService zaloPayService, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _zaloPayService = zaloPayService;
+            _mapper = mapper;
         }
         public async Task<TicketResponseDTO> CreateTicket(TicketRequestDTO request)
         {
             var projection = await _unitOfWork.ProjectionRepository.GetAsync(p => p.Id == request.ProjectionId) ?? throw new ArgumentNullException("Not found projection");
+            var film = await _unitOfWork.FilmRepository.GetAsync(p => p.Id == projection.FilmId) ?? throw new ArgumentNullException("Not found film");
             var room = await _unitOfWork.RoomRepository.GetAsync(r => r.Id == request.RoomId, "Seats, Projections") ?? throw new ArgumentNullException("Not found room");
 
             if (request.SeatAmount > room.Capacity)
@@ -59,6 +64,15 @@ namespace BAL.Services.Implement
             await _unitOfWork.SeatRepository.UpdateRange(seatLst);
             await _unitOfWork.SaveAsync();
 
+            List<Item> itemLst = new List<Item>();
+
+            foreach (var ticket in ticketLst)
+            {
+                Item item = new Item();
+                item.ItemId = ticket.Id;
+                itemLst.Add(item);
+            }
+
             var requestZaloPay = new PaymentDTO
             {
                 UserId = request.UserId,
@@ -67,7 +81,9 @@ namespace BAL.Services.Implement
                 PaymentRefId = $"Cine-{Guid.NewGuid()}",
                 RequiredAmount = totalPrice,
                 BankCode = "zalopayapp",
-                TicketIds = ticketLst.Select(x => x.Id).ToList()
+                TicketIds = ticketLst.Select(x => x.Id).ToList(),
+                ProjectionId = request.ProjectionId,
+                Items = itemLst
             };
 
             (bool returnStatus, string message) = await _zaloPayService.CreateZalopayPayment(requestZaloPay);
@@ -75,9 +91,14 @@ namespace BAL.Services.Implement
             return new TicketResponseDTO
             {
                 ProjectionId = projection.Id,
+                FilmId = film.Id,
+                FIlmName = film.Title,
+                StartTime = projection.StartTime,
+                EndTime = projection.EndTime,
+                RoomNumber = room.RoomNumber,
                 RoomId = room.Id,
                 SeatAmount = request.SeatAmount,
-                SeatIds = request.SeatIds,
+                SeatIds = _mapper.Map<List<SeatDto>>(seatLst),
                 RedirectUrl = returnStatus ? message : string.Empty,
                 TotalPrice = totalPrice,
             };
