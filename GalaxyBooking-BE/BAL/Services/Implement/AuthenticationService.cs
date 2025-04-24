@@ -1,4 +1,5 @@
 ﻿using BAL.Services.Interface;
+using DAL.Models;
 using DAL.Repository.Interface;
 
 namespace BAL.Services.Implement
@@ -11,7 +12,8 @@ namespace BAL.Services.Implement
         {
             _authRepository = authRepository;
         }
-        public async Task<string> LoginAsync(string email, string password)
+
+        public async Task<User> LoginAsync(string email, string password)
         {
             try
             {
@@ -23,7 +25,7 @@ namespace BAL.Services.Implement
                     throw new UnauthorizedAccessException("Invalid username or password.");
                 }
 
-                return "Login successful";
+                return user;
             }
             catch (Exception ex)
             {

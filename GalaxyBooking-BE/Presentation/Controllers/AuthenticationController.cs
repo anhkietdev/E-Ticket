@@ -1,4 +1,5 @@
 ﻿using BAL.Services.Interface;
+using DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers
@@ -24,13 +25,14 @@ namespace Presentation.Controllers
                     return BadRequest("Username and password are required.");
                 }
 
-                var result = await _authService.LoginAsync(request.Email, request.Password);
+                var user = await _authService.LoginAsync(request.Email, request.Password);
 
-                if (result == "Login successful")
+                if (user == null)
                 {
-                    return Ok(result);
+                    return Unauthorized("Invalid username or password.");
                 }
-                return Unauthorized(result);
+
+                return Ok(user);
             }
             catch (Exception ex)
             {
