@@ -1,7 +1,9 @@
-﻿namespace BAL.Services.Interface
+﻿using DAL.Models;
+
+namespace BAL.Services.Interface
 {
     public interface IAuthenticationService
     {
-        Task<string> LoginAsync(string email, string password);
+        Task<User> LoginAsync(string email, string password);
     }
 }
