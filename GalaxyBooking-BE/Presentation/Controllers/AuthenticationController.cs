@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
     public class AuthenticationController : BaseController
     {
         private readonly IAuthenticationService _authService;
@@ -12,7 +14,7 @@ namespace Presentation.Controllers
             _authService = authService;
         }
 
-        [HttpPost("login")]
+        [HttpPost]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             try
