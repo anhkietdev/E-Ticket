@@ -31,5 +31,11 @@ namespace BAL.DTOs
         public Guid ProjectionId { get; set; }
         public Guid SeatId { get; set; }
         public Guid UserId { get; set; }
+        public Guid FilmId { get; set; }
+        public string SeatNumber { get; set; }
+        public string RoomNumber { get; set; }
+        public string Title { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
     }
 }

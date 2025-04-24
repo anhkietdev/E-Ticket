@@ -48,6 +48,7 @@ namespace BAL.DTOs
             CreateMap<Film, FilmDto>();
             CreateMap<Room, RoomDto>();
             CreateMap<Ticket, TicketDto>();
+            CreateMap<Ticket, TicketResponseDTO>();
 
             // Room mappings
             CreateMap<RoomRequestDto, Room>()

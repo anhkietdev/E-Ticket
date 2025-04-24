@@ -13,6 +13,8 @@
         public DateTime EndTime { get; set; }
         public Guid FilmId { get; set; }
         public string FIlmName { get; set; }
+        public RoomDto Room { get; set; }
+        public FilmDto Film { get; set; }
 
     }
 }

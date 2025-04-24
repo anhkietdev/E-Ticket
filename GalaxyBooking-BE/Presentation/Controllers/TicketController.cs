@@ -1,6 +1,7 @@
 ﻿using BAL.DTOs;
 using BAL.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
+using Presentation.Extension;
 
 namespace Presentation.Controllers
 {
@@ -28,6 +29,21 @@ namespace Presentation.Controllers
             {
                 return InternalServerError(ex.Message);
             }
+        }
+
+        [HttpGet]
+        [Route("getallticket/{pageNumber}/{pageSize}")]
+        public async Task<IActionResult> GetTicket(int pageNumber = 1, int pageSize = 10)
+        {
+            var result = await _ticketService.GetTicketByUserId(this.GetAuthorizedUserId(), pageNumber, pageSize);
+            return Ok(result);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetTicketById([FromQuery] Guid Id)
+        {
+            var result = await _ticketService.GetTicketById(Id);
+            return Ok(result);
         }
     }
 }

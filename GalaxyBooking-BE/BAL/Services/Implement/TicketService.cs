@@ -103,5 +103,54 @@ namespace BAL.Services.Implement
                 TotalPrice = totalPrice,
             };
         }
+
+        public async Task<TicketDto> GetTicketById(Guid ticketId)
+        {
+            var ticket = await _unitOfWork.TicketRepository.GetAsync(e => e.Id == ticketId
+            , "Projection,Projection.Room,Projection.Film,Seat") ?? throw new ArgumentNullException("Ticket not found");
+            var ticketDto = new TicketDto
+            {
+                Id = ticket.Id,
+                PurchaseTime = ticket.PurchaseTime,
+                ProjectionId = ticket.ProjectionId,
+                SeatId = ticket.SeatId,
+                UserId = ticket.UserId,
+                SeatNumber = ticket.Seat?.SeatNumber,
+                RoomNumber = ticket.Projection?.Room?.RoomNumber,
+                StartTime = ticket.Projection?.StartTime ?? DateTime.MinValue,
+                EndTime = ticket.Projection?.EndTime ?? DateTime.MinValue,
+                FilmId = ticket.Projection.FilmId,
+                Title = ticket.Projection.Film.Title,
+            };
+
+            return ticketDto;
+        }
+
+        public async Task<PagedDto<TicketDto>> GetTicketByUserId(Guid UserId, int pageNumber,
+            int pageSize)
+        {
+            var ticketLst = await _unitOfWork.TicketRepository.GetPagingAsync(e => e.UserId == UserId
+            , "Projection,Projection.Room,Projection.Film,Seat"
+            , orderBy: e => e.CreatedAt
+            , pageNumber: pageNumber
+            , pageSize: pageSize);
+
+            var totalItems = ticketLst.Count;
+            var ticketDtos = ticketLst.Select(ticket => new TicketDto
+            {
+                Id = ticket.Id,
+                PurchaseTime = ticket.PurchaseTime,
+                ProjectionId = ticket.ProjectionId,
+                SeatId = ticket.SeatId,
+                UserId = ticket.UserId,
+                SeatNumber = ticket.Seat?.SeatNumber,
+                RoomNumber = ticket.Projection?.Room?.RoomNumber,
+                StartTime = ticket.Projection?.StartTime ?? DateTime.MinValue,
+                EndTime = ticket.Projection?.EndTime ?? DateTime.MinValue,
+                FilmId = ticket.Projection.FilmId,
+                Title = ticket.Projection.Film.Title,
+            }).ToList();
+            return new PagedDto<TicketDto>(pageNumber, pageSize, totalItems, ticketDtos);
+        }
     }
 }
