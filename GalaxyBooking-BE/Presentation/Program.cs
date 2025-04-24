@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.SqlServer;
 var builder = WebApplication.CreateBuilder(args);
 
 
-// Add services to the container
+// Add services to the container 
 ConfigureServices(builder.Services, builder.Configuration);
 
 builder.Services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
@@ -21,6 +21,7 @@ builder.Services.AddScoped<IProjectionService, ProjectionService>();
 builder.Services.AddScoped<IRoomService, RoomService>();
 builder.Services.AddScoped<ISeatService, SeatService>();
 builder.Services.AddScoped<IGenreService, GenreService>();
+builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -120,12 +121,8 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
 // Configure Pipeline
 void ConfigurePipeline(WebApplication app)
 {
-    // Development-specific middleware
-    if (app.Environment.IsDevelopment())
-    {
-        app.UseSwagger();
-        app.UseSwaggerUI();
-    }
+    app.UseSwagger();
+    app.UseSwaggerUI();
 
     // Global middleware
     app.UseCors("AllowAll");

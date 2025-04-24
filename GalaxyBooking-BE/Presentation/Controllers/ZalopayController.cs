@@ -1,6 +1,5 @@
-﻿using BAL.DTOs;
+﻿using BAL.DTOs.ZaloPay;
 using BAL.Services.Interface;
-using BAL.Services.ZaloPay.Request;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers
@@ -14,10 +13,13 @@ namespace Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreatePayment([FromBody] PaymentDTO request)
+        public async Task<IActionResult> Callback([FromBody] CallBackPaymentDTO request)
         {
-            var result = await _service.CreateZalopayPayment(request);
-            return Ok(new { redirectUrl = result });
+            CallBackResponseDTO callBackResponseDTO = new CallBackResponseDTO();
+
+            (callBackResponseDTO.ReturnCode, callBackResponseDTO.ReturnMessage) = await _service.CallBackPayment(request);
+
+            return Ok(callBackResponseDTO);
         }
     }
 }
