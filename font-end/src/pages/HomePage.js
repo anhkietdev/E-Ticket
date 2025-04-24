@@ -56,6 +56,8 @@ const BookTicketsButton = styled(Link)`
 
 const Section = styled.section`
   padding: 3rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
 `;
 
 const SectionHeader = styled.div`
@@ -88,6 +90,21 @@ const MovieGrid = styled.div`
   gap: 2rem;
 `;
 
+const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  width: 100%;
+`;
+
+const ErrorContainer = styled.div`
+  background: rgba(255, 0, 0, 0.1);
+  border-left: 4px solid #e94560;
+  padding: 1rem;
+  margin-bottom: 2rem;
+`;
+
 const HomePage = () => {
   const [nowPlaying, setNowPlaying] = useState([]);
   const [upcoming, setUpcoming] = useState([]);
@@ -99,23 +116,23 @@ const HomePage = () => {
       try {
         setLoading(true);
         
-        // Fetch tất cả phim trước
+        // Fetch tất cả phim
         const allMoviesResponse = await movieService.getAll();
         const allMovies = allMoviesResponse.data;
         
         console.log("Tất cả phim:", allMovies);
         
         // Phân loại phim dựa trên ngày phát hành
-        const currentDate = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+        const currentDate = new Date();
         
         // Phim đang chiếu: phim có ngày phát hành trước hoặc bằng ngày hiện tại
         const nowPlayingMovies = allMovies.filter(movie => 
-          movie.releaseDate <= currentDate
+          new Date(movie.releaseDate) <= currentDate
         );
         
         // Phim sắp chiếu: phim có ngày phát hành sau ngày hiện tại
         const upcomingMovies = allMovies.filter(movie => 
-          movie.releaseDate > currentDate
+          new Date(movie.releaseDate) > currentDate
         );
         
         console.log("Phim đang chiếu:", nowPlayingMovies);
@@ -156,9 +173,9 @@ const HomePage = () => {
         </SectionHeader>
         
         {loading ? (
-          <p>Đang tải...</p>
+          <LoadingContainer>Đang tải...</LoadingContainer>
         ) : error ? (
-          <p>{error}</p>
+          <ErrorContainer>{error}</ErrorContainer>
         ) : nowPlaying.length > 0 ? (
           <MovieGrid>
             {nowPlaying.map(movie => (
@@ -179,9 +196,9 @@ const HomePage = () => {
         </SectionHeader>
         
         {loading ? (
-          <p>Đang tải...</p>
+          <LoadingContainer>Đang tải...</LoadingContainer>
         ) : error ? (
-          <p>{error}</p>
+          <ErrorContainer>{error}</ErrorContainer>
         ) : upcoming.length > 0 ? (
           <MovieGrid>
             {upcoming.map(movie => (

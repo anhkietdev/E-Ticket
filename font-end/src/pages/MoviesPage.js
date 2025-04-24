@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { movieService } from '../services/api';
 import MovieCard from '../components/movie/MovieCard';
 import Header from '../components/common/Header';
+import Footer from '../components/common/Footer';
 import { FaSearch } from 'react-icons/fa';
 
 const PageContainer = styled.div`
@@ -13,6 +14,8 @@ const PageContainer = styled.div`
 
 const Content = styled.div`
   padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
 `;
 
 const PageTitle = styled.h1`
@@ -130,7 +133,18 @@ const MoviesPage = () => {
         setFilteredMovies(moviesData);
         
         // Lấy danh sách tất cả các thể loại duy nhất
-        const allGenres = moviesData.flatMap(movie => movie.genre);
+        const allGenres = [];
+        moviesData.forEach(movie => {
+          if (movie.filmGenres && movie.filmGenres.length > 0) {
+            movie.filmGenres.forEach(filmGenre => {
+              if (filmGenre.genre && filmGenre.genre.name) {
+                allGenres.push(filmGenre.genre.name);
+              }
+            });
+          }
+        });
+        
+        // Lọc các thể loại trùng nhau
         const uniqueGenres = [...new Set(allGenres)];
         setGenres(uniqueGenres);
         
@@ -162,15 +176,18 @@ const MoviesPage = () => {
         const query = searchQuery.toLowerCase();
         result = result.filter(movie => 
           movie.title.toLowerCase().includes(query) || 
-          movie.description.toLowerCase().includes(query)
+          (movie.description && movie.description.toLowerCase().includes(query))
         );
       }
       
       // Lọc theo thể loại
       if (selectedGenre) {
-        result = result.filter(movie => 
-          movie.genre.includes(selectedGenre)
-        );
+        result = result.filter(movie => {
+          if (!movie.filmGenres) return false;
+          return movie.filmGenres.some(fg => 
+            fg.genre && fg.genre.name === selectedGenre
+          );
+        });
       }
       
       setFilteredMovies(result);
@@ -255,6 +272,8 @@ const MoviesPage = () => {
           </EmptyState>
         )}
       </Content>
+      
+      <Footer />
     </PageContainer>
   );
 };

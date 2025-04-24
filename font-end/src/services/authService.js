@@ -3,7 +3,7 @@ import api from './api';
 const authService = {
   login: async (credentials) => {
     try {
-      const response = await api.post('/Authentication/login', credentials);
+      const response = await api.post('/Authentication/login/login', credentials);
       const { token, user } = response.data;
 
       if (!token || !user) {
