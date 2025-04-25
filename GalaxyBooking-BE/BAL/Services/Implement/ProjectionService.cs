@@ -38,6 +38,7 @@ namespace BAL.Services.Implement
 
             var projection = _mapper.Map<Projection>(projectionDto);
             projection.Id = Guid.NewGuid();
+            projection.CreatedBy = projectionDto.CreatedBy;
             projection.IsDeleted = false;
             projection.CreatedAt = DateTime.Now;
             projection.UpdatedAt = DateTime.Now;
@@ -73,6 +74,7 @@ namespace BAL.Services.Implement
 
             _mapper.Map(projectionDto, projection);
             projection.UpdatedAt = DateTime.Now;
+            projection.UpdatedBy = projectionDto.UpdatedBy;
 
             await _unitOfWork.ProjectionRepository.UpdateAsync(projection);
             await _unitOfWork.SaveAsync();

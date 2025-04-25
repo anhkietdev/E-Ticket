@@ -55,6 +55,7 @@ namespace BAL.Services.Implement
                     SeatId = item,
                     UserId = request.UserId,
                     IsPaymentSuccess = false,
+                    CreatedBy = request.CreatedBy,
                 };
 
                 ticketLst.Add(ticket);

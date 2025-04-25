@@ -14,5 +14,7 @@ namespace BAL.DTOs
         public RoomType Type { get; set; }
 
         public int Capacity { get; set; }
+        public Guid CreatedBy { get; set; }
+        public Guid UpdatedBy { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using BAL.DTOs;
 using BAL.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
+using Presentation.Extension;
 using System;
 using System.Threading.Tasks;
 
@@ -55,6 +56,7 @@ namespace Presentation.Controllers
         {
             try
             {
+                genreDto.CreatedBy = this.GetAuthorizedUserId();
                 var createdGenre = await _genreService.CreateAsync(genreDto);
                 return CreatedAtAction(nameof(GetGenreById), new { id = createdGenre.Id }, createdGenre);
             }
@@ -76,6 +78,7 @@ namespace Presentation.Controllers
         {
             try
             {
+                genreDto.UpdatedBy = this.GetAuthorizedUserId();
                 var updatedGenre = await _genreService.UpdateAsync(id, genreDto);
                 return Ok(updatedGenre);
             }

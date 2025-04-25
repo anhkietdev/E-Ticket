@@ -1,6 +1,7 @@
 ﻿using BAL.DTOs;
 using BAL.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
+using Presentation.Extension;
 using System;
 using System.Threading.Tasks;
 
@@ -55,6 +56,7 @@ namespace Presentation.Controllers
         {
             try
             {
+                filmDto.CreatedBy = this.GetAuthorizedUserId();
                 var createdFilm = await _filmService.CreateAsync(filmDto);
                 return CreatedAtAction(nameof(GetFilmById), new { id = createdFilm.Id }, createdFilm);
             }
@@ -74,6 +76,7 @@ namespace Presentation.Controllers
         {
             try
             {
+                filmDto.UpdatedBy = this.GetAuthorizedUserId();
                 var updatedFilm = await _filmService.UpdateAsync(id, filmDto);
                 return Ok(updatedFilm);
             }

@@ -40,6 +40,7 @@ namespace BAL.Services.Implement
 
             var seat = _mapper.Map<Seat>(seatDto);
             seat.Id = Guid.NewGuid();
+            seat.CreatedBy = seatDto.CreatedBy;
             seat.IsDeleted = false;
             seat.CreatedAt = DateTime.Now;
             seat.UpdatedAt = DateTime.Now;
@@ -78,6 +79,7 @@ namespace BAL.Services.Implement
 
             _mapper.Map(seatDto, seat);
             seat.UpdatedAt = DateTime.Now;
+            seat.UpdatedBy = seatDto.UpdatedBy;
 
             await _unitOfWork.SeatRepository.UpdateAsync(seat);
             await _unitOfWork.SaveAsync();

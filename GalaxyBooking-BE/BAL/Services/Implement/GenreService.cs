@@ -35,6 +35,7 @@ namespace BAL.Services.Implement
 
             var genre = _mapper.Map<Genre>(genreDto);
             genre.Id = Guid.NewGuid();
+            genre.CreatedBy = genreDto.CreatedBy;
             genre.IsDeleted = false;
             genre.CreatedAt = DateTime.Now;
             genre.UpdatedAt = DateTime.Now;
@@ -67,6 +68,7 @@ namespace BAL.Services.Implement
 
             _mapper.Map(genreDto, genre);
             genre.UpdatedAt = DateTime.Now;
+            genre.UpdatedBy = genreDto.UpdatedBy;
 
             await _unitOfWork.GenreRepository.UpdateAsync(genre);
             await _unitOfWork.SaveAsync();

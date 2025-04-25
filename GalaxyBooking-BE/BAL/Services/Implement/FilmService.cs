@@ -29,6 +29,7 @@ namespace BAL.Services.Implement
 
             var film = _mapper.Map<Film>(filmDto);
             film.Id = Guid.NewGuid();
+            film.CreatedBy = filmDto.CreatedBy;
             film.IsDeleted = false;
             film.CreatedAt = DateTime.Now;
             film.UpdatedAt = DateTime.Now;
@@ -49,6 +50,7 @@ namespace BAL.Services.Implement
                 throw new Exception("Film not found or has been deleted");
 
             _mapper.Map(filmDto, film);
+            film.UpdatedBy = filmDto.UpdatedBy;
             film.UpdatedAt = DateTime.Now;
 
             await _unitOfWork.FilmRepository.UpdateAsync(film);

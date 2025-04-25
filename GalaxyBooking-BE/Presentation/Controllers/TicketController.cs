@@ -20,6 +20,7 @@ namespace Presentation.Controllers
         {
             try
             {
+                request.CreatedBy = this.GetAuthorizedUserId();
                 var createdTicket = await _ticketService.CreateTicket(request);
                 return Ok(createdTicket);
             }

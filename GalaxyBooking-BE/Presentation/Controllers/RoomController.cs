@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 using DAL.Models;
+using Presentation.Extension;
 
 namespace API.Controllers
 {
@@ -24,6 +25,7 @@ namespace API.Controllers
         {
             try
             {
+                roomDto.CreatedBy = this.GetAuthorizedUserId();
                 var createdRoom = await _roomService.CreateAsync(roomDto);
                 return CreatedAtAction(nameof(GetById), new { id = createdRoom.Id }, createdRoom);
             }
@@ -43,6 +45,7 @@ namespace API.Controllers
         {
             try
             {
+                roomDto.UpdatedBy = this.GetAuthorizedUserId();
                 var updatedRoom = await _roomService.UpdateAsync(id, roomDto);
                 return Ok(updatedRoom);
             }
