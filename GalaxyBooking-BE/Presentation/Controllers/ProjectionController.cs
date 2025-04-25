@@ -62,6 +62,10 @@ namespace Presentation.Controllers
             {
                 return BadRequest(ex.Message);
             }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message); // Handles invalid date/time format
+            }
             catch (Exception ex)
             {
                 if (ex.Message.Contains("not found or has been deleted"))
@@ -82,6 +86,10 @@ namespace Presentation.Controllers
             catch (ArgumentNullException ex)
             {
                 return BadRequest(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message); // Handles invalid date/time format
             }
             catch (Exception ex)
             {
