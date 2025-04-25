@@ -7,7 +7,10 @@ namespace BAL.Services.Interface
         Task<TicketResponseDTO> CreateTicket(TicketRequestDTO request);
         Task<PagedDto<TicketDto>> GetTicketByUserId(Guid UserId, int pageNumber,
             int pageSize);
+        Task<PagedDto<TicketDto>> GetTickets(int pageNumber,
+            int pageSize);
         Task<TicketDto> GetTicketById(Guid ticketId);
         Task<List<TicketDto>> UpdatePaymentByAppTransId();
+        Task<bool> DeleteTicketById(Guid ticketId);
     }
 }

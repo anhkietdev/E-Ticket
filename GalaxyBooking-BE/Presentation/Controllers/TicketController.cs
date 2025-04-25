@@ -43,9 +43,17 @@ namespace Presentation.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetTicketById([FromQuery] Guid Id)
+        [Route("getallticketlist/{pageNumber}/{pageSize}")]
+        public async Task<IActionResult> GetTickets(int pageNumber = 1, int pageSize = 10)
         {
-            var result = await _ticketService.GetTicketById(Id);
+            var result = await _ticketService.GetTickets(pageNumber, pageSize);
+            return Ok(result);
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteTicketById([FromQuery] Guid Id)
+        {
+            var result = await _ticketService.DeleteTicketById(Id);
             return Ok(result);
         }
     }

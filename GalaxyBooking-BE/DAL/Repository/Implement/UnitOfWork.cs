@@ -46,5 +46,10 @@ namespace DAL.Repository.Implement
         {
             await _context.SaveChangesAsync();
         }
+
+        public async Task<int> SaveChangeAsync()
+        {
+            return await _context.SaveChangesAsync();
+        }
     }
 }
