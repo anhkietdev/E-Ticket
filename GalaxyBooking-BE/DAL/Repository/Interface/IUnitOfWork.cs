@@ -19,6 +19,7 @@
         public IAuthenticationRepository AuthenticationRepository { get; }
 
         public IIdentityUserRepository IdentityUserRepository { get; }
+        public IFilmGenreRepository  FilmGenreRepository { get; }
 
         Task SaveAsync();
     }

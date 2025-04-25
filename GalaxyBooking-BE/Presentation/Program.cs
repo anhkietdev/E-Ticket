@@ -26,6 +26,7 @@ builder.Services.AddScoped<IProjectionService, ProjectionService>();
 builder.Services.AddScoped<IRoomService, RoomService>();
 builder.Services.AddScoped<ISeatService, SeatService>();
 builder.Services.AddScoped<IGenreService, GenreService>();
+builder.Services.AddScoped<IFilmGenreService, FilmGenreService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<TokenSettings>();
