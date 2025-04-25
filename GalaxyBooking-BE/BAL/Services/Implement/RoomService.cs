@@ -28,6 +28,7 @@ namespace BAL.Services.Implement
 
             var room = _mapper.Map<Room>(roomDto);
             room.Id = Guid.NewGuid();
+            room.CreatedBy = roomDto.CreatedBy;
             room.IsDeleted = false;
             room.CreatedAt = DateTime.Now;
             room.UpdatedAt = DateTime.Now;
@@ -54,6 +55,7 @@ namespace BAL.Services.Implement
 
             _mapper.Map(roomDto, room);
             room.UpdatedAt = DateTime.Now;
+            room.UpdatedBy = roomDto.UpdatedBy;
 
             await _unitOfWork.RoomRepository.UpdateAsync(room);
             await _unitOfWork.SaveAsync();

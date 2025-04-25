@@ -1,6 +1,7 @@
 ﻿using BAL.DTOs;
 using BAL.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
+using Presentation.Extension;
 using System;
 using System.Threading.Tasks;
 
@@ -55,6 +56,7 @@ namespace Presentation.Controllers
         {
             try
             {
+                projectionDto.CreatedBy = this.GetAuthorizedUserId();
                 var createdProjection = await _projectionService.CreateAsync(projectionDto);
                 return CreatedAtAction(nameof(GetProjectionById), new { id = createdProjection.Id }, createdProjection);
             }
@@ -76,6 +78,7 @@ namespace Presentation.Controllers
         {
             try
             {
+                projectionDto.UpdatedBy = this.GetAuthorizedUserId();
                 var updatedProjection = await _projectionService.UpdateAsync(id, projectionDto);
                 return Ok(updatedProjection);
             }

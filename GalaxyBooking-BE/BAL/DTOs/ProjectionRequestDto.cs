@@ -18,5 +18,7 @@ namespace BAL.DTOs
         public Guid FilmId { get; set; }
 
         public Guid RoomId { get; set; }
+        public Guid CreatedBy { get; set; }
+        public Guid UpdatedBy { get; set; }
     }
 }

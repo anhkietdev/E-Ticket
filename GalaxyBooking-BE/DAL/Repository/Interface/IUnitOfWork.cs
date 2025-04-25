@@ -22,5 +22,6 @@
         public IFilmGenreRepository  FilmGenreRepository { get; }
 
         Task SaveAsync();
+        Task<int> SaveChangeAsync();
     }
 }

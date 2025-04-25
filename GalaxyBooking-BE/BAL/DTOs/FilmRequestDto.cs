@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BAL.DTOs
+﻿namespace BAL.DTOs
 {
     public class FilmRequestDto
     {
@@ -20,5 +14,7 @@ namespace BAL.DTOs
         public string? ImageURL { get; set; }
 
         public string? TrailerURL { get; set; }
+        public Guid? CreatedBy { get; set; }
+        public Guid? UpdatedBy { get; set; }
     }
 }

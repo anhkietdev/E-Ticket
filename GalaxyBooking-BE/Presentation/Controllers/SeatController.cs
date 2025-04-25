@@ -1,6 +1,7 @@
 ﻿using BAL.DTOs;
 using BAL.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
+using Presentation.Extension;
 using System;
 using System.Threading.Tasks;
 
@@ -55,6 +56,7 @@ namespace Presentation.Controllers
         {
             try
             {
+                seatDto.CreatedBy = this.GetAuthorizedUserId();
                 var createdSeat = await _seatService.CreateAsync(seatDto);
                 return CreatedAtAction(nameof(GetSeatById), new { id = createdSeat.Id }, createdSeat);
             }
@@ -76,6 +78,7 @@ namespace Presentation.Controllers
         {
             try
             {
+                seatDto.UpdatedBy = this.GetAuthorizedUserId();
                 var updatedSeat = await _seatService.UpdateAsync(id, seatDto);
                 return Ok(updatedSeat);
             }
