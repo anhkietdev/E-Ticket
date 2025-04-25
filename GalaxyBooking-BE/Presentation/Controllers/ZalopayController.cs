@@ -1,4 +1,6 @@
-﻿using BAL.DTOs.ZaloPay;
+﻿using BAL.Constants;
+using BAL.DTOs.ZaloPay;
+using BAL.Services.Implement;
 using BAL.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,19 +9,22 @@ namespace Presentation.Controllers
     public class ZalopayController : BaseController
     {
         private readonly IZaloPayService _service;
-        public ZalopayController(IZaloPayService service)
+        private readonly ITicketService _ticketService;
+        public ZalopayController(IZaloPayService service, ITicketService ticketService)
         {
             _service = service;
+            _ticketService = ticketService;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Callback([FromBody] CallBackPaymentDTO request)
+        [HttpGet]
+        public async Task<IActionResult> CheckOrderStatus()
         {
-            CallBackResponseDTO callBackResponseDTO = new CallBackResponseDTO();
-
-            (callBackResponseDTO.ReturnCode, callBackResponseDTO.ReturnMessage) = await _service.CallBackPayment(request);
-
-            return Ok(callBackResponseDTO);
+            var checkStatus = await _service.CheckOrderStatus();
+            if (checkStatus == Constant.ZaloPayConfig.ZaloPaymentSuccessStatus)
+            {
+               await _ticketService.UpdatePaymentByAppTransId();
+            }
+            return Ok(true);
         }
     }
 }

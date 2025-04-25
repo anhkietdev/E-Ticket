@@ -18,5 +18,6 @@
 
         public virtual User User { get; set; }
         public bool IsPaymentSuccess { get; set; } = false;
+        public string AppTransId { get; set; }
     }
 }

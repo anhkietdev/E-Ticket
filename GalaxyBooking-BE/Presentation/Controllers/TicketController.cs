@@ -8,9 +8,11 @@ namespace Presentation.Controllers
     public class TicketController : BaseController
     {
         private readonly ITicketService _ticketService;
-        public TicketController(ITicketService ticketService)
+        private readonly IZaloPayService _zaloPayService;
+        public TicketController(ITicketService ticketService, IZaloPayService zaloPayService)
         {
             _ticketService = ticketService;
+            _zaloPayService = zaloPayService;
         }
 
         [HttpPost]

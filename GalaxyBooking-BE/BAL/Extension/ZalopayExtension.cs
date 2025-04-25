@@ -1,4 +1,6 @@
-﻿using BAL.Helpers;
+﻿using Azure.Core;
+using BAL.Helpers;
+using BAL.Services.Interface;
 using BAL.Services.ZaloPay.Request;
 using BAL.Services.ZaloPay.Response;
 using Newtonsoft.Json;
@@ -30,6 +32,37 @@ namespace BAL.Extension
 
             return keyValuePairs;
         }
+
+        public static int CheckStatus(this IZaloPayService service, int appId, string apptransid, string key1, string orderUrl)
+        {
+            var param = new Dictionary<string, string>();
+            param.Add("appid", appId.ToString());
+            param.Add("apptransid", apptransid.ToString());
+            var data = appId + "|" + apptransid + "|" + key1;
+
+            param.Add("mac", HashHelper.HmacSha256(key1, data));
+            using var client = new HttpClient();
+            var content = new FormUrlEncodedContent(param);
+
+            var response = client.PostAsync(orderUrl, content).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = response.Content.ReadAsStringAsync().Result;
+                var responseData = JsonConvert.DeserializeObject<CreateZalopayResponse>(responseContent);
+
+                if (responseData.ReturnCode == Constants.Constant.ZaloPayConfig.ZaloPaymentSuccessStatus)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+            return 0;
+        }
+
         public static (bool, string) GetLink(this CreateZalopayRequest request, string paymentUrl)
         {
             using var client = new HttpClient();

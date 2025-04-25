@@ -8,5 +8,6 @@ namespace BAL.Services.Interface
         Task<PagedDto<TicketDto>> GetTicketByUserId(Guid UserId, int pageNumber,
             int pageSize);
         Task<TicketDto> GetTicketById(Guid ticketId);
+        Task<List<TicketDto>> UpdatePaymentByAppTransId();
     }
 }

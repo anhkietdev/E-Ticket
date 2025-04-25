@@ -5,11 +5,11 @@ using BAL.Helpers;
 using BAL.Services.Interface;
 using BAL.Services.ZaloPay.Config;
 using BAL.Services.ZaloPay.Request;
+using DAL.Common;
 using DAL.Models;
 using DAL.Repository.Interface;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using System.Dynamic;
 
 namespace BAL.Services.Implement
 {
@@ -23,31 +23,10 @@ namespace BAL.Services.Implement
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<(int, string)> CallBackPayment(CallBackPaymentDTO request)
+        public async Task<int> CheckOrderStatus()
         {
-            (int returnCode, string returnMessage) = await VerifyPayment(request);
-            if (returnCode == -1)
-            {
-                return (returnCode, returnMessage);
-            }
-
-            CallBackObj callBackObj = JsonConvert.DeserializeObject<CallBackObj>(request.Data);
-            EmbedDataDTO embedDataDTO = JsonConvert.DeserializeObject<EmbedDataDTO>(callBackObj.EmbedData);
-
-            List<Ticket> ticketLst = new List<Ticket>();
-
-            foreach (var item in embedDataDTO.TicketIds)
-            {
-                var ticket = await _unitOfWork.TicketRepository.GetAsync(t => t.Id == item);
-                ticket.IsPaymentSuccess = true;
-
-                ticketLst.Add(ticket);
-            }
-
-            await _unitOfWork.TicketRepository.UpdateRange(ticketLst);
-            await _unitOfWork.SaveAsync();
-
-            return (returnCode, returnMessage);
+            var result = this.CheckStatus(_zaloPayConfig.AppId, GlobalCache.AppTransIdCache, _zaloPayConfig.Key1, _zaloPayConfig.OrderUrl);
+            return result;
         }
 
         public async Task<(bool, string)> CreateZalopayPayment(PaymentDTO request)
@@ -65,7 +44,7 @@ namespace BAL.Services.Implement
                 AppUser = _zaloPayConfig.AppUser,
                 AppTime = (long)(DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds,
                 Amount = (long)request.RequiredAmount,
-                AppTransId = DateTime.Now.ToString("yymmdd"),
+                AppTransId = DateTime.Now.ToString("yymmdd") + Guid.NewGuid().ToString(),
                 Description = request.PaymentContent,
                 EmbedData = JsonConvert.SerializeObject(embedData).ToString(),
                 ReturnUrl = _zaloPayConfig.RedirectUrl,
@@ -75,6 +54,7 @@ namespace BAL.Services.Implement
             };
             zalopayRequest.MakeSignature(_zaloPayConfig.Key1);
             (bool createZaloPayLinkResult, string createZaloPayMessage) = zalopayRequest.GetLink(_zaloPayConfig.PaymentUrl);
+            GlobalCache.AppTransIdCache = zalopayRequest.AppTransId;
             if (createZaloPayLinkResult)
             {
                 return (true, createZaloPayMessage);
@@ -104,5 +84,7 @@ namespace BAL.Services.Implement
                 return (1, "mac not equal");
             }
         }
+
+
     }
 }

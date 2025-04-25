@@ -2,6 +2,7 @@
 using BAL.DTOs;
 using BAL.Services.Interface;
 using BAL.Services.ZaloPay.Request;
+using DAL.Common;
 using DAL.Models;
 using DAL.Repository.Interface;
 
@@ -60,10 +61,6 @@ namespace BAL.Services.Implement
                 totalPrice += ticket.Price;
             }
 
-            await _unitOfWork.TicketRepository.AddRange(ticketLst);
-            await _unitOfWork.SeatRepository.UpdateRange(seatLst);
-            await _unitOfWork.SaveAsync();
-
             List<Item> itemLst = new List<Item>();
 
             foreach (var ticket in ticketLst)
@@ -87,6 +84,15 @@ namespace BAL.Services.Implement
             };
 
             (bool returnStatus, string message) = await _zaloPayService.CreateZalopayPayment(requestZaloPay);
+
+            foreach (var item in ticketLst)
+            {
+                item.AppTransId = GlobalCache.AppTransIdCache;
+            }
+
+            await _unitOfWork.TicketRepository.AddRange(ticketLst);
+            await _unitOfWork.SeatRepository.UpdateRange(seatLst);
+            await _unitOfWork.SaveAsync();
 
             return new TicketResponseDTO
             {
@@ -151,6 +157,21 @@ namespace BAL.Services.Implement
                 Title = ticket.Projection.Film.Title,
             }).ToList();
             return new PagedDto<TicketDto>(pageNumber, pageSize, totalItems, ticketDtos);
+        }
+
+        public async Task<List<TicketDto>> UpdatePaymentByAppTransId()
+        {
+            var ticketLst = await _unitOfWork.TicketRepository.GetAllAsync(e => e.AppTransId == GlobalCache.AppTransIdCache);
+
+            foreach (var item in ticketLst)
+            {
+                item.IsPaymentSuccess = true;
+            }
+
+            await _unitOfWork.TicketRepository.UpdateRange(ticketLst);
+            await _unitOfWork.SaveAsync();
+
+            return _mapper.Map<List<TicketDto>>(ticketLst);
         }
     }
 }
