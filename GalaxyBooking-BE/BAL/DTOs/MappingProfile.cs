@@ -91,6 +91,24 @@ namespace BAL.DTOs
                 .ForMember(dest => dest.FilmGenres, opt => opt.Ignore());
 
             CreateMap<Genre, GenreResponseDto>();
+
+            // FilmGenre mappings
+            CreateMap<FilmGenreRequestDto, FilmGenre>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.DeletedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedBy, opt => opt.Ignore())
+                .ForMember(dest => dest.Film, opt => opt.Ignore())
+                .ForMember(dest => dest.Genre, opt => opt.Ignore());
+
+            CreateMap<FilmGenre, FilmGenresResponseDto>()
+                .ForMember(dest => dest.FilmId, opt => opt.MapFrom(src => src.FilmId))
+                .ForMember(dest => dest.GenreId, opt => opt.MapFrom(src => src.GenreId))
+                .ForMember(dest => dest.Film, opt => opt.MapFrom(src => src.Film))
+                .ForMember(dest => dest.Genre, opt => opt.MapFrom(src => src.Genre));
         }
     }
 }
