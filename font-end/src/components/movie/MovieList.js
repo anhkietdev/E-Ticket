@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+/*import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { movieService } from './api';
 import MovieCard from './MovieCard';
@@ -92,3 +92,4 @@ const MovieList = () => {
 };
 
 export default MovieList;
+*/

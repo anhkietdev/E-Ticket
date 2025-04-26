@@ -25,7 +25,7 @@ const PageTitle = styled.h1`
 const Section = styled.div`
   background: #16213e;
   border-radius: 8px;
-  padding: 1.5rem;
+  padding: 1.5rem;z
   margin-bottom: 2rem;
 `;
 
@@ -118,7 +118,7 @@ const ProfilePage = () => {
             <InfoRow>
               <InfoIcon><FaUser /></InfoIcon>
               <InfoLabel>Họ tên:</InfoLabel>
-              <InfoValue>{currentUser.name}</InfoValue>
+              <InfoValue>{currentUser.Fullname}</InfoValue>
             </InfoRow>
             
             <InfoRow>
@@ -130,7 +130,7 @@ const ProfilePage = () => {
             <InfoRow>
               <InfoIcon><FaPhone /></InfoIcon>
               <InfoLabel>Điện thoại:</InfoLabel>
-              <InfoValue>{currentUser.phone || 'Không có thông tin'}</InfoValue>
+              <InfoValue>{currentUser.PhoneNumber || 'Không có thông tin'}</InfoValue>
             </InfoRow>
           </ProfileInfo>
           

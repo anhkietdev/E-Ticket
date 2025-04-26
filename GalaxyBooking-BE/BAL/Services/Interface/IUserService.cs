@@ -9,6 +9,7 @@ namespace BAL.Services.Interface
         Task<AuthenResultDto> RegisterAsync(RegisterDto registerDto);
         Task ForgotPasswordAsync(string email);
         Task<bool> VerifyOtpAsync(VerifyOtpDto verifyDto);
+        Task<User> GetProfileAsync();
 
         Task<ICollection<User>> GetAllAsync();
 

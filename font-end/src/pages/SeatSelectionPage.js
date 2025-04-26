@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { format } from 'date-fns';
-import { FaCouch, FaRegCheckCircle, FaRegTimesCircle, FaLock, FaChild } from 'react-icons/fa';
+import { FaCouch, FaRegCheckCircle, FaRegTimesCircle, FaLock } from 'react-icons/fa';
 import { seatService } from '../services/api';
 import Header from '../components/common/Header';
-import { useBooking } from '../context/BookingContext';
+import Footer from '../components/common/Footer';
 import { useAuth } from '../context/AuthContext';
+import { useBooking } from '../context/BookingContext';
 
 const PageContainer = styled.div`
   background-color: #0f0f1e;
@@ -116,21 +117,21 @@ const Seat = styled.div`
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  cursor: ${props => props.isAvailable ? 'pointer' : 'not-allowed'};
+  cursor: ${props => (props.$isAvailable ? 'pointer' : 'not-allowed')};
   background-color: ${props => {
-    if (props.isSelected) return '#e94560';
-    if (!props.isAvailable) return '#333';
-    return props.type === 'vip' ? '#ff9800' : '#1a1a2e';
+    if (props.$isSelected) return '#e94560';
+    if (!props.$isAvailable) return '#333';
+    return props.$type === 'vip' ? '#ff9800' : '#1a1a2e';
   }};
   color: ${props => {
-    if (props.isSelected) return '#fff';
-    if (!props.isAvailable) return '#777';
-    return props.type === 'vip' ? '#fff' : '#fff';
+    if (props.$isSelected) return '#fff';
+    if (!props.$isAvailable) return '#777';
+    return props.$type === 'vip' ? '#fff' : '#fff';
   }};
   transition: all 0.2s;
-  
+
   &:hover {
-    transform: ${props => props.isAvailable ? 'scale(1.1)' : 'none'};
+    transform: ${props => (props.$isAvailable ? 'scale(1.1)' : 'none')};
   }
 `;
 
@@ -170,7 +171,7 @@ const SummaryRow = styled.div`
   display: flex;
   justify-content: space-between;
   margin-bottom: 1rem;
-  
+
   &:last-child {
     margin-bottom: 0;
     padding-top: 1rem;
@@ -206,7 +207,7 @@ const Button = styled.button`
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s;
-  
+
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -215,11 +216,12 @@ const Button = styled.button`
 
 const BackButton = styled(Button)`
   background: transparent;
-  color: white;
-  border: 1px solid #333;
-  
+  color: #e94560;
+  border: 2px solid #e94560;
+
   &:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.1);
+    background: #e94560;
+    color: white;
   }
 `;
 
@@ -227,248 +229,322 @@ const ContinueButton = styled(Button)`
   background: #e94560;
   color: white;
   border: none;
-  
+
   &:hover:not(:disabled) {
     background: #ff6b81;
   }
 `;
 
-// Mảng các hàng và số lượng ghế mỗi hàng
-const ROWS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-const SEATS_PER_ROW = 12;
-
 const SeatSelectionPage = () => {
   const navigate = useNavigate();
-  const { selectedMovie, selectedCinema, selectedShowTime, selectedSeats, toggleSeatSelection, calculateTotalPrice } = useBooking();
+  const location = useLocation();
   const { currentUser } = useAuth();
-  
+  const { setSelectedSeats, setSelectedMovie, setSelectedShowTime, selectedMovie: contextMovie, selectedShowTime: contextShowTime } = useBooking();
+
+  // Use data from location.state, fallback to context
+  const { movie = contextMovie, showTime = contextShowTime } = location.state || {};
+
   const [seats, setSeats] = useState([]);
+  const [selectedSeats, setLocalSelectedSeats] = useState([]);
+  const [seatMap, setSeatMap] = useState([]);
+  const [roomInfo, setRoomInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [seatMap, setSeatMap] = useState([]);
-  
+
   useEffect(() => {
-    // Kiểm tra xem người dùng đã đăng nhập chưa
     if (!currentUser) {
       navigate('/login');
       return;
     }
-    
-    // Kiểm tra xem đã chọn phim, rạp, suất chiếu chưa
-    if (!selectedMovie || !selectedCinema || !selectedShowTime) {
-      navigate('/movies');
+
+    if (!movie || !showTime || !showTime.room || !showTime.room.id) {
+      let errorMessage = 'Incomplete data. Please select a showtime again.';
+      if (!movie) errorMessage += ' Missing movie.';
+      if (!showTime) errorMessage += ' Missing showTime.';
+      if (showTime && !showTime.room) errorMessage += ' Missing showTime.room.';
+      if (showTime && showTime.room && !showTime.room.id) errorMessage += ' Missing showTime.room.id.';
+      setError(errorMessage);
+      setTimeout(() => navigate(movie ? `/movies/${movie.id}` : '/movies'), 3000);
+      setLoading(false);
       return;
     }
-    
-    const fetchSeats = async () => {
+
+    if (!contextMovie && movie) {
+      setSelectedMovie(movie);
+    }
+    if (!contextShowTime && showTime) {
+      setSelectedShowTime(showTime);
+    }
+
+    const fetchRoomAndSeats = async () => {
       try {
         setLoading(true);
-        
-        // Fetch danh sách ghế cho suất chiếu đã chọn
-        const response = await seatService.getByShowTimeId(selectedShowTime.id);
-        setSeats(response.data);
-        
+        const roomId = showTime.room.id;
+
+        const roomResponse = await seatService.getRoomById(roomId);
+        if (!roomResponse.data) {
+          throw new Error('Room information not found.');
+        }
+        setRoomInfo(roomResponse.data);
+
+        const seatsResponse = await seatService.getByShowTimeId(showTime.id);
+        if (!seatsResponse.data) {
+          throw new Error('Seat information not found.');
+        }
+        setSeats(seatsResponse.data || []);
       } catch (err) {
-        console.error('Error fetching seats:', err);
-        setError('Không thể tải thông tin ghế. Vui lòng thử lại sau.');
+        setError(err.message || 'Unable to load room or seat information. Please try again later.');
+        setTimeout(() => navigate(movie ? `/movies/${movie.id}` : '/movies'), 3000);
       } finally {
         setLoading(false);
       }
     };
-    
-    fetchSeats();
-  }, [currentUser, navigate, selectedMovie, selectedCinema, selectedShowTime]);
-  
-  // Tạo sơ đồ ghế ngồi khi danh sách ghế thay đổi
+
+    fetchRoomAndSeats();
+  }, [currentUser, navigate, movie, showTime, contextMovie, contextShowTime, setSelectedMovie, setSelectedShowTime]);
+
   useEffect(() => {
-    if (seats.length > 0) {
-      const map = [];
-      
-      // Tạo một mẫu dữ liệu ghế nếu API không đủ ghế
-      const sampleSeats = [];
-      
-      ROWS.forEach(row => {
-        const rowSeats = [];
-        
-        for (let num = 1; num <= SEATS_PER_ROW; num++) {
-          // Tìm ghế trong dữ liệu từ API
-          const seatFromApi = seats.find(s => s.row === row && s.number === num);
-          
-          if (seatFromApi) {
-            rowSeats.push(seatFromApi);
-          } else {
-            // Nếu không có ghế từ API, tạo ghế mẫu
-            const isAvailable = Math.random() > 0.3; // 70% ghế trống
-            const type = (row === 'A' || row === 'B') ? 'standard' : 
-                         (row === 'C' || row === 'D') ? 'vip' : 'standard';
-            const price = type === 'vip' ? selectedShowTime.price * 1.2 : selectedShowTime.price;
-            
-            const sampleSeat = {
-              id: `sample-${row}-${num}`,
-              showTimeId: selectedShowTime.id,
-              row,
-              number: num,
-              type,
-              price,
-              isAvailable
-            };
-            
-            sampleSeats.push(sampleSeat);
-            rowSeats.push(sampleSeat);
-          }
-        }
-        
-        map.push({ row, seats: rowSeats });
-      });
-      
-      // Kết hợp ghế từ API và ghế mẫu
-      if (sampleSeats.length > 0 && seats.length < ROWS.length * SEATS_PER_ROW) {
-        setSeats([...seats, ...sampleSeats]);
-      }
-      
-      setSeatMap(map);
+    if (!roomInfo || !showTime) return;
+
+    const rowCount = parseInt(roomInfo.row) || 8;
+    const seatsPerRow = parseInt(roomInfo.seatInRow) || 1;
+    if (rowCount <= 0 || seatsPerRow <= 0) {
+      setError('Invalid room information: row or seatInRow is incorrect.');
+      setTimeout(() => navigate(movie ? `/movies/${movie.id}` : '/movies'), 3000);
+      return;
     }
-  }, [seats, selectedShowTime]);
-  
-  const handleSeatClick = (seat) => {
+
+    const rows = Array.from({ length: rowCount }, (_, i) => String.fromCharCode(65 + i));
+
+    const map = [];
+    rows.forEach(row => {
+      const rowSeats = [];
+      for (let num = 1; num <= seatsPerRow; num++) {
+        const seatFromApi = seats.find(
+          s => (s.Row || s.row) === row && (s.SeatNumber || s.seatNumber) === num.toString()
+        );
+        if (seatFromApi) {
+          const isAvailable =
+            !seatFromApi.Tickets ||
+            seatFromApi.Tickets.length === 0 ||
+            !seatFromApi.Tickets.some(ticket => ticket.ProjectionId === showTime.id);
+          rowSeats.push({
+            id: seatFromApi.Id || seatFromApi.id,
+            showTimeId: showTime.id,
+            row: seatFromApi.Row || seatFromApi.row,
+            number: parseInt(seatFromApi.SeatNumber || seatFromApi.seatNumber),
+            type: row === 'A' || row === 'B' ? 'standard' : row === 'C' || row === 'D' ? 'vip' : 'standard',
+            price: row === 'A' || row === 'B' ? showTime.price : row === 'C' || row === 'D' ? showTime.price * 1.2 : showTime.price,
+            isAvailable: isAvailable,
+          });
+        } else {
+          rowSeats.push({
+            id: `missing-${row}-${num}`,
+            showTimeId: showTime.id,
+            row,
+            number: num,
+            type: row === 'A' || row === 'B' ? 'standard' : row === 'C' || row === 'D' ? 'vip' : 'standard',
+            price: row === 'A' || row === 'B' ? showTime.price : row === 'C' || row === 'D' ? showTime.price * 1.2 : showTime.price,
+            isAvailable: false,
+          });
+        }
+      }
+      map.push({ row, seats: rowSeats });
+    });
+    setSeatMap(map);
+  }, [seats, showTime, roomInfo, navigate, movie]);
+
+  const handleSeatClick = seat => {
     if (seat.isAvailable) {
-      toggleSeatSelection(seat);
+      setLocalSelectedSeats(prev =>
+        prev.some(s => s.id === seat.id)
+          ? prev.filter(s => s.id !== seat.id)
+          : [...prev, seat]
+      );
     }
   };
-  
+
+  const calculateTotalPrice = () => {
+    return selectedSeats.reduce((total, seat) => total + seat.price, 0);
+  };
+
   const handleContinue = () => {
     if (selectedSeats.length > 0) {
-      navigate('/booking/checkout');
+      setSelectedSeats(selectedSeats);
+      navigate('/booking/checkout', {
+        state: {
+          movie: movie,
+          showTime: showTime,
+          selectedSeats: selectedSeats,
+        },
+      });
     }
   };
-  
+
   const handleBack = () => {
-    navigate(`/movies/${selectedMovie.id}`);
+    navigate(`/movies/${movie?.id || ''}`);
   };
-  
-  // Kiểm tra xem ghế đã được chọn chưa
-  const isSeatSelected = (seat) => {
+
+  const isSeatSelected = seat => {
     return selectedSeats.some(s => s.id === seat.id);
   };
-  
-  // Format giá tiền
-  const formatPrice = (price) => {
+
+  const formatPrice = price => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
   };
 
-  if (loading) return <PageContainer><Header /><div style={{ padding: '2rem' }}>Đang tải...</div></PageContainer>;
-  if (error) return <PageContainer><Header /><div style={{ padding: '2rem' }}>{error}</div></PageContainer>;
+  if (loading) {
+    return (
+      <PageContainer>
+        <Header />
+        <ContentContainer>Loading...</ContentContainer>
+        <Footer />
+      </PageContainer>
+    );
+  }
+
+  if (error) {
+    return (
+      <PageContainer>
+        <Header />
+        <ContentContainer>
+          {error}
+          <ButtonContainer>
+            <BackButton onClick={() => navigate(movie ? `/movies/${movie.id}` : '/movies')}>
+              {movie ? 'Select another showtime' : 'Back to movies'}
+            </BackButton>
+          </ButtonContainer>
+        </ContentContainer>
+        <Footer />
+      </PageContainer>
+    );
+  }
 
   return (
     <PageContainer>
       <Header />
-      
       <ContentContainer>
         <MovieInfo>
-          <MoviePoster src={selectedMovie.poster} alt={selectedMovie.title} />
+          <MoviePoster
+            src={movie.imageURL || 'https://via.placeholder.com/100x150?text=No+Image'}
+            alt={movie.title}
+          />
           <MovieDetails>
-            <MovieTitle>{selectedMovie.title}</MovieTitle>
+            <MovieTitle>{movie.title}</MovieTitle>
             <ShowtimeInfo>
               <InfoItem>
-                <InfoIcon><FaRegCheckCircle /></InfoIcon>
-                <div>{selectedCinema.name}</div>
+                <InfoIcon>
+                  <FaRegCheckCircle />
+                </InfoIcon>
+                <div>Room: {showTime.room?.roomNumber || 'Unknown'}</div>
               </InfoItem>
               <InfoItem>
-                <InfoIcon><FaRegTimesCircle /></InfoIcon>
-                <div>{format(new Date(selectedShowTime.date), 'dd/MM/yyyy')} - {selectedShowTime.startTime}</div>
+                <InfoIcon>
+                  <FaRegTimesCircle />
+                </InfoIcon>
+                <div>{format(new Date(showTime.startTime), 'dd/MM/yyyy HH:mm')}</div>
               </InfoItem>
               <InfoItem>
-                <InfoIcon><FaLock /></InfoIcon>
-                <div>{selectedShowTime.hall}</div>
+                <InfoIcon>
+                  <FaLock />
+                </InfoIcon>
+                <div>
+                  Showtime:{' '}
+                  <span>
+                    {format(new Date(showTime.startTime), 'HH:mm')} -{' '}
+                    {format(
+                      new Date(showTime.endTime || new Date(showTime.startTime).setHours(new Date(showTime.startTime).getHours() + 2)),
+                      'HH:mm'
+                    )}
+                  </span>
+                </div>
               </InfoItem>
             </ShowtimeInfo>
           </MovieDetails>
         </MovieInfo>
-        
+
         <SeatSelectionContainer>
-          <SectionTitle>Chọn ghế ngồi</SectionTitle>
-          
-          <Screen>Màn hình</Screen>
-          
+          <SectionTitle>Select Seats</SectionTitle>
+          <Screen>Screen</Screen>
           <SeatsContainer>
-            {seatMap.map(row => (
-              <Row key={row.row}>
-                <RowLabel>{row.row}</RowLabel>
-                {row.seats.map(seat => (
-                  <Seat
-                    key={`${seat.row}-${seat.number}`}
-                    isAvailable={seat.isAvailable}
-                    isSelected={isSeatSelected(seat)}
-                    type={seat.type}
-                    onClick={() => handleSeatClick(seat)}
-                  >
-                    <SeatIcon />
-                  </Seat>
-                ))}
-                <RowLabel>{row.row}</RowLabel>
-              </Row>
-            ))}
+            {seatMap.length > 0 ? (
+              seatMap.map(row => (
+                <Row key={row.row}>
+                  <RowLabel>{row.row}</RowLabel>
+                  {row.seats.map(seat => (
+                    <Seat
+                      key={`${seat.row}-${seat.number}`}
+                      $isAvailable={seat.isAvailable}
+                      $isSelected={isSeatSelected(seat)}
+                      $type={seat.type}
+                      onClick={() => handleSeatClick(seat)}
+                    >
+                      <SeatIcon />
+                    </Seat>
+                  ))}
+                  <RowLabel>{row.row}</RowLabel>
+                </Row>
+              ))
+            ) : (
+              <div>No seats available to display.</div>
+            )}
           </SeatsContainer>
-          
+
           <SeatLegend>
             <LegendItem>
               <LegendColor color="#1a1a2e" />
-              <span>Ghế thường</span>
+              <span>Standard Seat</span>
             </LegendItem>
             <LegendItem>
               <LegendColor color="#ff9800" />
-              <span>Ghế VIP</span>
+              <span>VIP Seat</span>
             </LegendItem>
             <LegendItem>
               <LegendColor color="#e94560" />
-              <span>Đang chọn</span>
+              <span>Selected</span>
             </LegendItem>
             <LegendItem>
               <LegendColor color="#333" />
-              <span>Đã đặt</span>
+              <span>Booked or Unavailable</span>
             </LegendItem>
           </SeatLegend>
-          
+
           <SummaryContainer>
-            <SectionTitle>Thông tin đặt vé</SectionTitle>
-            
+            <SectionTitle>Booking Information</SectionTitle>
             <SummaryRow>
-              <div>Ghế đã chọn:</div>
+              <div>Selected Seats:</div>
               <SelectedSeatsList>
                 {selectedSeats.length > 0 ? (
                   selectedSeats.map(seat => (
                     <SelectedSeatBadge key={seat.id}>
-                      {seat.row}{seat.number} ({seat.type === 'vip' ? 'VIP' : 'Thường'})
+                      {seat.row}
+                      {seat.number} ({seat.type === 'vip' ? 'VIP' : 'Standard'})
                     </SelectedSeatBadge>
                   ))
                 ) : (
-                  <span style={{ color: '#a0a0a0' }}>Chưa chọn ghế</span>
+                  <span style={{ color: '#a0a0a0' }}>No seats selected</span>
                 )}
               </SelectedSeatsList>
             </SummaryRow>
-            
             <SummaryRow>
-              <div>Tổng số ghế:</div>
+              <div>Total Seats:</div>
               <div>{selectedSeats.length}</div>
             </SummaryRow>
-            
             <SummaryRow>
-              <div>Tổng tiền:</div>
+              <div>Total Price:</div>
               <div>{formatPrice(calculateTotalPrice())}</div>
             </SummaryRow>
           </SummaryContainer>
-          
+
           <ButtonContainer>
-            <BackButton onClick={handleBack}>Quay lại</BackButton>
-            <ContinueButton 
-              onClick={handleContinue}
-              disabled={selectedSeats.length === 0}
-            >
-              Tiếp tục
+            <BackButton onClick={handleBack}>Back</BackButton>
+            <ContinueButton disabled={selectedSeats.length === 0} onClick={handleContinue}>
+              Continue
             </ContinueButton>
           </ButtonContainer>
         </SeatSelectionContainer>
       </ContentContainer>
+      <Footer />
     </PageContainer>
   );
 };

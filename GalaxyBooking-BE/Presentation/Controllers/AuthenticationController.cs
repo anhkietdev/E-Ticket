@@ -1,12 +1,13 @@
 ﻿using BAL.DTOs.Authentication;
 using BAL.Services.Interface;
 using DAL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/[controller]")] 
     public class AuthenticationController : BaseController
     {
         private readonly IAuthenticationService _authService;
@@ -54,7 +55,6 @@ namespace Presentation.Controllers
                 }
 
                 LoginDto loginDto = new LoginDto(request.Email, request.Password);
-               
 
                 var user = await _userService.LoginAsync(loginDto);
 
@@ -81,9 +81,6 @@ namespace Presentation.Controllers
                     return BadRequest("Username and password are required.");
                 }
 
-                LoginDto loginDto = new LoginDto(request.Email, request.Password);
-
-                
                 var user = await _userService.RegisterAsync(request);
 
                 return Ok(user);
@@ -105,6 +102,40 @@ namespace Presentation.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("profile")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetProfile()
+        {
+            try
+            {
+                // Log tất cả claims trong token
+                Console.WriteLine("Claims in token:");
+                foreach (var claim in User.Claims)
+                {
+                    Console.WriteLine($"{claim.Type}: {claim.Value}");
+                }
+
+                var user = await _userService.GetProfileAsync();
+                return Ok(user);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Lỗi hệ thống: {ex.Message}");
             }
         }
 
