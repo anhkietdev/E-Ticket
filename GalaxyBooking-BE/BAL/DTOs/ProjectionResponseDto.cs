@@ -22,6 +22,7 @@ namespace BAL.DTOs
     public class RoomDto
     {
         public string RoomNumber { get; set; }
+        public Guid Id { get; set; }
     }
 
     public class TicketDto

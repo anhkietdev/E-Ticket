@@ -1,4 +1,4 @@
-// src/services/movieService.js
+
 import api from './api';
 
 const movieService = {

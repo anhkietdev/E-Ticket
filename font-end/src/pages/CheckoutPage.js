@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { format } from 'date-fns';
-import { FaRegCheckCircle, FaTicketAlt, FaCreditCard, FaMoneyBill, FaQrcode } from 'react-icons/fa';
+import { FaRegCheckCircle, FaTicketAlt, FaQrcode } from 'react-icons/fa';
 import Header from '../components/common/Header';
 import { useBooking } from '../context/BookingContext';
 import { useAuth } from '../context/AuthContext';
+import axios from 'axios';
 
 const PageContainer = styled.div`
   background-color: #0f0f1e;
@@ -24,11 +25,44 @@ const PageTitle = styled.h1`
   margin-bottom: 2rem;
 `;
 
+const ErrorMessage = styled.div`
+  text-align: center;
+  padding: 2rem;
+  color: #e94560;
+  background: #16213e;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+`;
+
+const Button = styled.button`
+  padding: 12px 24px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+const BackButton = styled(Button)`
+  background: transparent;
+  color: #e94560;
+  border: 2px solid #e94560;
+
+  &:hover:not(:disabled) {
+    background: #e94560;
+    color: white;
+  }
+`;
+
 const CheckoutGrid = styled.div`
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 2rem;
-  
+
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
   }
@@ -123,14 +157,9 @@ const PaymentMethod = styled.div`
   align-items: center;
   padding: 1rem;
   border-radius: 4px;
-  border: 1px solid ${props => props.selected ? '#e94560' : '#333'};
-  background: ${props => props.selected ? 'rgba(233, 69, 96, 0.1)' : 'transparent'};
-  cursor: pointer;
+  border: 1px solid #e94560;
+  background: rgba(233, 69, 96, 0.1);
   transition: all 0.3s;
-  
-  &:hover {
-    border-color: #e94560;
-  }
 `;
 
 const PaymentIcon = styled.span`
@@ -138,7 +167,7 @@ const PaymentIcon = styled.span`
   align-items: center;
   margin-right: 1rem;
   font-size: 1.5rem;
-  color: ${props => props.selected ? '#e94560' : '#a0a0a0'};
+  color: #e94560;
 `;
 
 const PaymentInfo = styled.div`
@@ -164,7 +193,7 @@ const SummaryRow = styled.div`
   display: flex;
   justify-content: space-between;
   margin-bottom: 1rem;
-  
+
   &:last-child {
     margin-bottom: 0;
     padding-top: 1rem;
@@ -180,34 +209,11 @@ const ButtonContainer = styled.div`
   justify-content: space-between;
 `;
 
-const Button = styled.button`
-  padding: 12px 24px;
-  border-radius: 4px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s;
-  
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-`;
-
-const BackButton = styled(Button)`
-  background: transparent;
-  color: white;
-  border: 1px solid #333;
-  
-  &:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.1);
-  }
-`;
-
 const CompleteButton = styled(Button)`
   background: #e94560;
   color: white;
   border: none;
-  
+
   &:hover:not(:disabled) {
     background: #ff6b81;
   }
@@ -256,7 +262,7 @@ const ModalButton = styled(Button)`
   background: #e94560;
   color: white;
   border: none;
-  
+
   &:hover {
     background: #ff6b81;
   }
@@ -264,101 +270,127 @@ const ModalButton = styled(Button)`
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
-  const { selectedMovie, selectedCinema, selectedShowTime, selectedSeats, calculateTotalPrice, completeBooking, resetBooking } = useBooking();
+  const location = useLocation();
+  const { selectedMovie, selectedShowTime, selectedSeats, calculateTotalPrice, completeBooking, resetBooking } = useBooking();
   const { currentUser } = useAuth();
-  
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('credit_card');
+
   const [isProcessing, setIsProcessing] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [bookingId, setBookingId] = useState(null);
-  
-  // Kiểm tra nếu người dùng đến trang này mà không có thông tin đặt vé
-  if (!selectedMovie || !selectedCinema || !selectedShowTime || selectedSeats.length === 0) {
-    navigate('/movies');
-    return null;
-  }
-  
-  const handlePaymentMethodSelect = (method) => {
-    setSelectedPaymentMethod(method);
-  };
-  
+  const [error, setError] = useState(null);
+
+  const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:5086';
+
+  useEffect(() => {
+    console.log('Dữ liệu trong CheckoutPage:', {
+      selectedMovie,
+      selectedShowTime,
+      selectedSeats,
+    });
+
+    if (!selectedMovie || !selectedShowTime || selectedSeats.length === 0) {
+      setError('Dữ liệu đặt vé không đầy đủ. Vui lòng chọn lại suất chiếu và ghế.');
+    }
+  }, [selectedMovie, selectedShowTime, selectedSeats]);
+
   const handleBack = () => {
     navigate('/booking/seats');
   };
-  
+
   const handleComplete = async () => {
     try {
       setIsProcessing(true);
-      
-      // Gọi API để hoàn tất đặt vé
+
       const booking = await completeBooking(currentUser.id);
       setBookingId(booking.id);
-      
-      // Hiển thị modal thành công
-      setShowSuccessModal(true);
-      
+
+      const totalPrice = calculateTotalPrice();
+      const paymentData = {
+        bookingId: booking.id,
+        amount: totalPrice,
+        description: `Thanh toán đặt vé phim ${selectedMovie.title} - Mã đặt vé: ${booking.id}`,
+        userId: currentUser.id,
+        returnUrl: `${window.location.origin}/booking/payment-callback`,
+      };
+
+      const response = await axios.post(`${backendUrl}/api/payment/zalopay`, paymentData, {
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (response.data && response.data.order_url) {
+
+        window.location.href = response.data.order_url;
+      } else {
+        throw new Error('Không thể tạo giao dịch ZaloPay.');
+      }
     } catch (error) {
-      console.error('Error completing booking:', error);
-      alert('Đã có lỗi xảy ra khi hoàn tất đặt vé. Vui lòng thử lại sau.');
-    } finally {
+      console.error('Lỗi khi thực hiện thanh toán:', error);
+      alert('Đã có lỗi xảy ra khi thực hiện thanh toán. Vui lòng thử lại sau.');
       setIsProcessing(false);
     }
   };
-  
+
   const handleCloseModal = () => {
-    // Đóng modal và reset trạng thái đặt vé
     setShowSuccessModal(false);
     resetBooking();
     navigate('/');
   };
-  
-  // Format giá tiền
+
   const formatPrice = (price) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
   };
 
+  if (error || !selectedMovie || !selectedShowTime || selectedSeats.length === 0) {
+    return (
+      <PageContainer>
+        <Header />
+        <ContentContainer>
+          <ErrorMessage>{error || 'Dữ liệu đặt vé không đầy đủ. Vui lòng chọn lại suất chiếu và ghế.'}</ErrorMessage>
+          <BackButton onClick={handleBack}>Quay lại chọn ghế</BackButton>
+        </ContentContainer>
+      </PageContainer>
+    );
+  }
+
   return (
     <PageContainer>
       <Header />
-      
       <ContentContainer>
-        <PageTitle>Thanh toán</PageTitle>
-        
+        <PageTitle>Thanh Toán</PageTitle>
         <CheckoutGrid>
           <div>
             <Section>
               <SectionTitle>
                 <SectionIcon><FaTicketAlt /></SectionIcon>
-                Thông tin vé
+                Thông Tin Vé
               </SectionTitle>
-              
               <MovieInfo>
-                <MoviePoster src={selectedMovie.poster} alt={selectedMovie.title} />
+                <MoviePoster
+                  src={selectedMovie.imageURL || 'https://via.placeholder.com/100x150?text=No+Image'}
+                  alt={selectedMovie.title}
+                />
                 <MovieDetails>
                   <MovieTitle>{selectedMovie.title}</MovieTitle>
-                  
-                  <InfoRow>
-                    <InfoLabel>Rạp:</InfoLabel>
-                    <InfoValue>{selectedCinema.name}</InfoValue>
-                  </InfoRow>
-                  
                   <InfoRow>
                     <InfoLabel>Phòng chiếu:</InfoLabel>
-                    <InfoValue>{selectedShowTime.hall}</InfoValue>
+                    <InfoValue>{selectedShowTime.room?.roomNumber || 'Không xác định'}</InfoValue>
                   </InfoRow>
-                  
                   <InfoRow>
                     <InfoLabel>Ngày chiếu:</InfoLabel>
-                    <InfoValue>{format(new Date(selectedShowTime.date), 'dd/MM/yyyy')}</InfoValue>
+                    <InfoValue>{format(new Date(selectedShowTime.startTime), 'dd/MM/yyyy')}</InfoValue>
                   </InfoRow>
-                  
                   <InfoRow>
                     <InfoLabel>Suất chiếu:</InfoLabel>
-                    <InfoValue>{selectedShowTime.startTime} - {selectedShowTime.endTime}</InfoValue>
+                    <InfoValue>
+                      {format(new Date(selectedShowTime.startTime), 'HH:mm')} -{' '}
+                      {format(
+                        new Date(selectedShowTime.endTime || new Date(selectedShowTime.startTime).setHours(new Date(selectedShowTime.startTime).getHours() + 2)),
+                        'HH:mm'
+                      )}
+                    </InfoValue>
                   </InfoRow>
                 </MovieDetails>
               </MovieInfo>
-              
               <BookingDetails>
                 <InfoRow>
                   <InfoLabel>Ghế:</InfoLabel>
@@ -372,126 +404,78 @@ const CheckoutPage = () => {
                 </InfoRow>
               </BookingDetails>
             </Section>
-            
             <Section>
               <SectionTitle>
-                <SectionIcon><FaCreditCard /></SectionIcon>
-                Phương thức thanh toán
+                <SectionIcon><FaQrcode /></SectionIcon>
+                Phương Thức Thanh Toán
               </SectionTitle>
-              
               <PaymentMethods>
-                <PaymentMethod 
-                  selected={selectedPaymentMethod === 'credit_card'}
-                  onClick={() => handlePaymentMethodSelect('credit_card')}
-                >
-                  <PaymentIcon selected={selectedPaymentMethod === 'credit_card'}>
-                    <FaCreditCard />
-                  </PaymentIcon>
-                  <PaymentInfo>
-                    <PaymentName>Thẻ tín dụng / Ghi nợ</PaymentName>
-                    <PaymentDescription>Visa, Mastercard, JCB</PaymentDescription>
-                  </PaymentInfo>
-                </PaymentMethod>
-                
-                <PaymentMethod 
-                  selected={selectedPaymentMethod === 'cash'}
-                  onClick={() => handlePaymentMethodSelect('cash')}
-                >
-                  <PaymentIcon selected={selectedPaymentMethod === 'cash'}>
-                    <FaMoneyBill />
-                  </PaymentIcon>
-                  <PaymentInfo>
-                    <PaymentName>Tiền mặt</PaymentName>
-                    <PaymentDescription>Thanh toán tại quầy</PaymentDescription>
-                  </PaymentInfo>
-                </PaymentMethod>
-                
-                <PaymentMethod 
-                  selected={selectedPaymentMethod === 'momo'}
-                  onClick={() => handlePaymentMethodSelect('momo')}
-                >
-                  <PaymentIcon selected={selectedPaymentMethod === 'momo'}>
+                <PaymentMethod>
+                  <PaymentIcon>
                     <FaQrcode />
                   </PaymentIcon>
                   <PaymentInfo>
-                    <PaymentName>Ví điện tử</PaymentName>
-                    <PaymentDescription>MoMo, ZaloPay, VNPay</PaymentDescription>
+                    <PaymentName>ZaloPay</PaymentName>
+                    <PaymentDescription>Thanh toán qua ví điện tử ZaloPay</PaymentDescription>
                   </PaymentInfo>
                 </PaymentMethod>
               </PaymentMethods>
             </Section>
           </div>
-          
           <OrderSummary>
             <SectionTitle>
               <SectionIcon><FaRegCheckCircle /></SectionIcon>
-              Tóm tắt đơn hàng
+              Tóm Tắt Đơn Hàng
             </SectionTitle>
-            
             <SummaryRow>
               <div>Phim:</div>
               <div>{selectedMovie.title}</div>
             </SummaryRow>
-            
-            <SummaryRow>
-              <div>Rạp:</div>
-              <div>{selectedCinema.name}</div>
-            </SummaryRow>
-            
             <SummaryRow>
               <div>Suất chiếu:</div>
-              <div>{selectedShowTime.startTime}</div>
+              <div>{format(new Date(selectedShowTime.startTime), 'HH:mm')}</div>
             </SummaryRow>
-            
             <SummaryRow>
               <div>Số ghế:</div>
               <div>{selectedSeats.length}</div>
             </SummaryRow>
-            
             <SummaryRow>
               <div>Giá vé:</div>
               <div>{formatPrice(selectedShowTime.price)}</div>
             </SummaryRow>
-            
             {selectedSeats.some(seat => seat.type === 'vip') && (
               <SummaryRow>
                 <div>Phụ thu VIP:</div>
                 <div>{formatPrice(selectedSeats.filter(seat => seat.type === 'vip').length * (selectedShowTime.price * 0.2))}</div>
               </SummaryRow>
             )}
-            
             <SummaryRow>
               <div>Tổng tiền:</div>
               <div>{formatPrice(calculateTotalPrice())}</div>
             </SummaryRow>
-            
             <ButtonContainer>
-              <BackButton onClick={handleBack}>Quay lại</BackButton>
-              <CompleteButton 
-                onClick={handleComplete}
-                disabled={isProcessing}
-              >
-                {isProcessing ? 'Đang xử lý...' : 'Hoàn tất đặt vé'}
+              <BackButton onClick={handleBack}>Quay Lại</BackButton>
+              <CompleteButton onClick={handleComplete} disabled={isProcessing}>
+                {isProcessing ? 'Đang Xử Lý...' : 'Hoàn Tất Đặt Vé'}
               </CompleteButton>
             </ButtonContainer>
           </OrderSummary>
         </CheckoutGrid>
       </ContentContainer>
-      
       {showSuccessModal && (
         <SuccessModal>
           <ModalContent>
             <SuccessIcon>
               <FaRegCheckCircle />
             </SuccessIcon>
-            <ModalTitle>Đặt vé thành công!</ModalTitle>
+            <ModalTitle>Đặt Vé Thành Công!</ModalTitle>
             <ModalMessage>
               Cảm ơn bạn đã đặt vé tại Cinema Booking. <br />
               Mã đặt vé của bạn là: <strong>#{bookingId}</strong> <br />
               Thông tin chi tiết đã được gửi đến email của bạn.
             </ModalMessage>
             <ModalButton onClick={handleCloseModal}>
-              Quay lại trang chủ
+              Quay Lại Trang Chủ
             </ModalButton>
           </ModalContent>
         </SuccessModal>

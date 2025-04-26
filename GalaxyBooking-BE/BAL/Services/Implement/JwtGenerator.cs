@@ -8,34 +8,27 @@ namespace BAL.Services.Implement
 {
     public static class JwtGenerator
     {
-        public static string GenerateToken(this User user, string secretKey, int expiredMinutes, string issuer, string audience)
+        public static string GenerateToken(User user, string secretKey, int expiryInMinutes, string issuer, string audience)
         {
-            var secretKeyInByte = Encoding.UTF8.GetBytes(secretKey);
-            var sercurityKey = new SymmetricSecurityKey(secretKeyInByte);
-            var credentials = new SigningCredentials(sercurityKey, SecurityAlgorithms.HmacSha256);
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(secretKey);
 
-            var claims = new List<Claim>
+            var tokenDescriptor = new SecurityTokenDescriptor
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Role, user.Role.ToString())
+                Subject = new ClaimsIdentity(new[]
+                {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()), 
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Role, user.Role.ToString())
+        }),
+                Expires = DateTime.UtcNow.AddMinutes(expiryInMinutes),
+                Issuer = issuer,
+                Audience = audience,
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
-            var token = new JwtSecurityToken
-                (
-                    issuer: issuer,
-                    audience: audience,
-                    expires: DateTime.UtcNow.AddMinutes(expiredMinutes),
-                    claims: claims,
-                    signingCredentials: credentials
-                );
-
-            var jwtTokenHandler = new JwtSecurityTokenHandler();
-            var jwtToken = jwtTokenHandler.WriteToken(token);
-            foreach (var claim in token.Claims)
-            {
-                Console.WriteLine($"{claim.Type}: {claim.Value}");
-            }
-            return jwtToken;
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
         }
     }
 }

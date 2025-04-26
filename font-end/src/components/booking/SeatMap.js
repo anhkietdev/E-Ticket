@@ -131,7 +131,7 @@ const SeatMap = ({
   onSeatClick,
   showSelectedSeatsInfo = true 
 }) => {
-  // Kiểm tra xem ghế đã được chọn chưa
+  
   const isSeatSelected = (seat) => {
     return selectedSeats.some(s => s.id === seat.id);
   };

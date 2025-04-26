@@ -108,7 +108,7 @@ const EmptyState = styled.div`
   border-radius: 8px;
 `;
 
-// Lấy 7 ngày từ ngày hôm nay
+
 const getDateOptions = () => {
   const dates = [];
   const today = new Date();
@@ -151,7 +151,6 @@ const ShowTimeList = ({
 }) => {
   const dateOptions = getDateOptions();
   
-  // Lọc lịch chiếu theo ngày đã chọn
   const filteredShowTimes = showTimes.filter(showtime => 
     formatShowtimeDate(showtime.date) === formatShowtimeDate(selectedDate)
   );

@@ -146,13 +146,17 @@ namespace BAL.Services.Implement
 
         public async Task<IEnumerable<ProjectionResponseDto>> FindByFilmIdAsync(Guid filmId)
         {
-            var projections = await _unitOfWork.ProjectionRepository.FindByFilmIdAsync(filmId);
+            var projections = await _unitOfWork.ProjectionRepository.GetAllAsync(
+                filter: p => p.FilmId == filmId && !p.IsDeleted,
+                includeProperties: "Film,Room,Tickets");
             return _mapper.Map<IEnumerable<ProjectionResponseDto>>(projections);
         }
 
         public async Task<IEnumerable<ProjectionResponseDto>> FindByRoomIdAsync(Guid roomId)
         {
-            var projections = await _unitOfWork.ProjectionRepository.FindByRoomIdAsync(roomId);
+            var projections = await _unitOfWork.ProjectionRepository.GetAllAsync(
+                filter: p => p.RoomId == roomId && !p.IsDeleted,
+                includeProperties: "Film,Room,Tickets");
             return _mapper.Map<IEnumerable<ProjectionResponseDto>>(projections);
         }
     }

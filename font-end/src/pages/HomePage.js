@@ -56,8 +56,6 @@ const BookTicketsButton = styled(Link)`
 
 const Section = styled.section`
   padding: 3rem 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
 `;
 
 const SectionHeader = styled.div`
@@ -90,21 +88,6 @@ const MovieGrid = styled.div`
   gap: 2rem;
 `;
 
-const LoadingContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 200px;
-  width: 100%;
-`;
-
-const ErrorContainer = styled.div`
-  background: rgba(255, 0, 0, 0.1);
-  border-left: 4px solid #e94560;
-  padding: 1rem;
-  margin-bottom: 2rem;
-`;
-
 const HomePage = () => {
   const [nowPlaying, setNowPlaying] = useState([]);
   const [upcoming, setUpcoming] = useState([]);
@@ -116,30 +99,26 @@ const HomePage = () => {
       try {
         setLoading(true);
         
-        // Fetch tất cả phim
         const allMoviesResponse = await movieService.getAll();
         const allMovies = allMoviesResponse.data;
         
         console.log("Tất cả phim:", allMovies);
+      
+        const currentDate = new Date().toISOString().split('T')[0]; 
         
-        // Phân loại phim dựa trên ngày phát hành
-        const currentDate = new Date();
-        
-        // Phim đang chiếu: phim có ngày phát hành trước hoặc bằng ngày hiện tại
         const nowPlayingMovies = allMovies.filter(movie => 
-          new Date(movie.releaseDate) <= currentDate
+          movie.releaseDate <= currentDate
         );
         
-        // Phim sắp chiếu: phim có ngày phát hành sau ngày hiện tại
         const upcomingMovies = allMovies.filter(movie => 
-          new Date(movie.releaseDate) > currentDate
+          movie.releaseDate > currentDate
         );
         
         console.log("Phim đang chiếu:", nowPlayingMovies);
         console.log("Phim sắp chiếu:", upcomingMovies);
         
-        setNowPlaying(nowPlayingMovies.slice(0, 4)); // Chỉ lấy 4 phim
-        setUpcoming(upcomingMovies.slice(0, 4)); // Chỉ lấy 4 phim
+        setNowPlaying(nowPlayingMovies.slice(0, 4)); 
+        setUpcoming(upcomingMovies.slice(0, 4));
         
       } catch (err) {
         console.error('Error fetching movies:', err);
@@ -173,9 +152,9 @@ const HomePage = () => {
         </SectionHeader>
         
         {loading ? (
-          <LoadingContainer>Đang tải...</LoadingContainer>
+          <p>Đang tải...</p>
         ) : error ? (
-          <ErrorContainer>{error}</ErrorContainer>
+          <p>{error}</p>
         ) : nowPlaying.length > 0 ? (
           <MovieGrid>
             {nowPlaying.map(movie => (
@@ -196,9 +175,9 @@ const HomePage = () => {
         </SectionHeader>
         
         {loading ? (
-          <LoadingContainer>Đang tải...</LoadingContainer>
+          <p>Đang tải...</p>
         ) : error ? (
-          <ErrorContainer>{error}</ErrorContainer>
+          <p>{error}</p>
         ) : upcoming.length > 0 ? (
           <MovieGrid>
             {upcoming.map(movie => (

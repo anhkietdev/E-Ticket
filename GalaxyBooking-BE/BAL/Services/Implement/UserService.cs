@@ -3,7 +3,10 @@ using BAL.Services.Interface;
 using DAL.Models;
 using DAL.Repository.Interface;
 using Infrastructure.Utils;
+using Microsoft.AspNetCore.Http; 
+
 using Microsoft.Extensions.Configuration;
+using System.Security.Claims;
 
 namespace BAL.Services.Implement
 {
@@ -13,13 +16,21 @@ namespace BAL.Services.Implement
         private readonly IConfiguration _configuration;
         private readonly ITokenGenerator _tokenGenerator;
         private readonly IEmailService _emailService;
+        private readonly IHttpContextAccessor _httpContextAccessor; // Thêm để lấy thông tin từ token
 
-        public UserService(IUnitOfWork unitOfWork, IConfiguration configuration, ITokenGenerator tokenGenerator, IEmailService emailService)
+        public UserService(
+            IUnitOfWork unitOfWork,
+            IConfiguration configuration,
+            ITokenGenerator tokenGenerator,
+            IEmailService emailService,
+            IHttpContextAccessor httpContextAccessor // Thêm vào constructor
+        )
         {
             _unitOfWork = unitOfWork;
             _configuration = configuration;
             _tokenGenerator = tokenGenerator;
             _emailService = emailService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<AuthenResultDto> LoginAsync(LoginDto loginDto)
@@ -36,6 +47,7 @@ namespace BAL.Services.Implement
                     IsSuccess = false,
                 };
             }
+
             var secretKey = _configuration["JwtSettings:SecretKey"];
             var issuer = _configuration["JwtSettings:Issuer"];
             var audience = _configuration["JwtSettings:Audience"];
@@ -56,8 +68,7 @@ namespace BAL.Services.Implement
                 Password = HashPass.HashWithSHA256(registerDto.Password),
             };
 
-            var result = _unitOfWork.UserRepository.AddAsync(newUser);
-
+            await _unitOfWork.UserRepository.AddAsync(newUser);
             await _unitOfWork.SaveAsync();
 
             if (newUser == null)
@@ -93,10 +104,9 @@ namespace BAL.Services.Implement
 
             var mailBody = new MailDto
             {
-                Receivers = new List<string> { email, }.AsReadOnly(),
+                Receivers = new List<string> { email }.AsReadOnly(),
                 Subject = "Forgot password",
-                Body =
-                    $"This is your otp: {otp}, expires in {expiryTimeSpan.Minutes} minutes.",
+                Body = $"This is your otp: {otp}, expires in {expiryTimeSpan.Minutes} minutes.",
             };
 
             _ = Task.Run(() => _emailService.SendEmailAsync(mailBody));
@@ -109,22 +119,10 @@ namespace BAL.Services.Implement
                 tracked: false
             );
 
-            //var isOtp = result.OtpCode.Equals(verifyDto.Otp.Trim());
-            //if (!isOtp)
-            //{
-            //    return false;
-            //}
-
-            //var expiration = result.OtpCodeExpiration!.Value;
-            //var now = DateTime.Now;
-
-            //if (now.CompareTo(expiration) > 0)
-            //{
-            //    return false;
-            //}
 
             return true;
         }
+
 
         public Task<ICollection<User>> GetAllAsync()
         {
@@ -132,6 +130,45 @@ namespace BAL.Services.Implement
                 tracked: false
             );
             return users;
+        }
+        public async Task<User> GetProfileAsync()
+        {
+            // Thử tìm claim nameid thủ công
+            var userIdClaim = _httpContextAccessor.HttpContext?.User.FindFirst("nameid") ??
+                              _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier);
+
+            if (userIdClaim == null)
+            {
+                // Log tất cả claims để debug
+                Console.WriteLine("Claims in HttpContext.User:");
+                foreach (var claim in _httpContextAccessor.HttpContext?.User.Claims ?? Enumerable.Empty<Claim>())
+                {
+                    Console.WriteLine($"{claim.Type}: {claim.Value}");
+                }
+                throw new UnauthorizedAccessException("Không tìm thấy thông tin người dùng trong token.");
+            }
+
+            Console.WriteLine($"Found userIdClaim: {userIdClaim.Value}");
+
+            if (!Guid.TryParse(userIdClaim.Value, out var userId))
+            {
+                Console.WriteLine($"Invalid Guid format for userId: {userIdClaim.Value}");
+                throw new UnauthorizedAccessException("ID người dùng trong token không hợp lệ.");
+            }
+
+            var user = await _unitOfWork.UserRepository.GetAsync(
+                u => u.Id == userId,
+                tracked: false
+            );
+
+            if (user == null)
+            {
+                Console.WriteLine($"User not found with Id: {userId}");
+                throw new KeyNotFoundException("Không tìm thấy người dùng.");
+            }
+
+            return user;
+
         }
     }
 }

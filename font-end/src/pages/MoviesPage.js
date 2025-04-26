@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { movieService } from '../services/api';
 import MovieCard from '../components/movie/MovieCard';
 import Header from '../components/common/Header';
-import Footer from '../components/common/Footer';
 import { FaSearch } from 'react-icons/fa';
 
 const PageContainer = styled.div`
@@ -14,8 +13,6 @@ const PageContainer = styled.div`
 
 const Content = styled.div`
   padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
 `;
 
 const PageTitle = styled.h1`
@@ -119,7 +116,6 @@ const MoviesPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('');
   
-  // Danh sách các thể loại từ tất cả các phim
   const [genres, setGenres] = useState([]);
 
   useEffect(() => {
@@ -131,20 +127,8 @@ const MoviesPage = () => {
         
         setMovies(moviesData);
         setFilteredMovies(moviesData);
-        
-        // Lấy danh sách tất cả các thể loại duy nhất
-        const allGenres = [];
-        moviesData.forEach(movie => {
-          if (movie.filmGenres && movie.filmGenres.length > 0) {
-            movie.filmGenres.forEach(filmGenre => {
-              if (filmGenre.genre && filmGenre.genre.name) {
-                allGenres.push(filmGenre.genre.name);
-              }
-            });
-          }
-        });
-        
-        // Lọc các thể loại trùng nhau
+      
+        const allGenres = moviesData.flatMap(movie => movie.genre);
         const uniqueGenres = [...new Set(allGenres)];
         setGenres(uniqueGenres);
         
@@ -160,34 +144,28 @@ const MoviesPage = () => {
   }, []);
 
   useEffect(() => {
-    // Lọc phim dựa trên tab, tìm kiếm và thể loại
+
     const filterMovies = () => {
       let result = [...movies];
       
-      // Lọc theo tab (phim đang chiếu / sắp chiếu)
       if (activeTab === 'now-playing') {
         result = result.filter(movie => new Date(movie.releaseDate) <= new Date());
       } else if (activeTab === 'upcoming') {
         result = result.filter(movie => new Date(movie.releaseDate) > new Date());
       }
       
-      // Lọc theo tìm kiếm
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
         result = result.filter(movie => 
           movie.title.toLowerCase().includes(query) || 
-          (movie.description && movie.description.toLowerCase().includes(query))
+          movie.description.toLowerCase().includes(query)
         );
       }
       
-      // Lọc theo thể loại
       if (selectedGenre) {
-        result = result.filter(movie => {
-          if (!movie.filmGenres) return false;
-          return movie.filmGenres.some(fg => 
-            fg.genre && fg.genre.name === selectedGenre
-          );
-        });
+        result = result.filter(movie => 
+          movie.genre.includes(selectedGenre)
+        );
       }
       
       setFilteredMovies(result);
@@ -247,12 +225,6 @@ const MoviesPage = () => {
             />
           </SearchContainer>
           
-          <GenreFilter value={selectedGenre} onChange={handleGenreChange}>
-            <option value="">Tất cả thể loại</option>
-            {genres.map((genre, index) => (
-              <option key={index} value={genre}>{genre}</option>
-            ))}
-          </GenreFilter>
         </FiltersContainer>
         
         {loading ? (
@@ -272,8 +244,6 @@ const MoviesPage = () => {
           </EmptyState>
         )}
       </Content>
-      
-      <Footer />
     </PageContainer>
   );
 };

@@ -15,13 +15,13 @@ namespace DAL.Repository.Implement
         public Task<ICollection<Projection>> FindByFilmIdAsync(Guid filmId)
         {
             return GetAllAsync(
-                filter: p => p.FilmId == filmId && !p.IsDeleted);
+                filter: p => p.FilmId == filmId && !p.IsDeleted, includeProperties: "Film,Room,Tickets");
         }
 
         public Task<ICollection<Projection>> FindByRoomIdAsync(Guid roomId)
         {
             return GetAllAsync(
-                filter: p => p.RoomId == roomId && !p.IsDeleted);
+                filter: p => p.RoomId == roomId && !p.IsDeleted, includeProperties: "Film,Room,Tickets");
         }
     }
 }

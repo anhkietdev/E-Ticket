@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { FaUser, FaLock, FaEnvelope, FaPhone } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 import Header from '../components/common/Header';
 import { useAuth } from '../context/AuthContext';
+import { authService } from '../services/api';
 
 const PageContainer = styled.div`
   background-color: #0f0f1e;
@@ -30,7 +32,7 @@ const PageTitle = styled.h1`
   text-align: center;
 `;
 
-const Form = styled.form`
+const Form = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -115,18 +117,19 @@ const ErrorMessage = styled.p`
 const LoginPage = () => {
   const navigate = useNavigate();
   const { login, register, error: authError } = useAuth();
-  
+
   const [isLogin, setIsLogin] = useState(true);
+  const [isStaffLogin, setIsStaffLogin] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     name: '',
     phone: '',
   });
-  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -134,133 +137,156 @@ const LoginPage = () => {
       [name]: value,
     });
   };
-  
+
   const validateForm = () => {
     const { email, password, name, phone } = formData;
-    
+
     if (isLogin) {
       if (!email || !password) {
-        setError('Vui lòng nhập đầy đủ thông tin');
+        setError('Vui lòng nhập cả email và mật khẩu');
         return false;
       }
     } else {
       if (!email || !password || !name || !phone) {
-        setError('Vui lòng nhập đầy đủ thông tin');
+        setError('Vui lòng điền đầy đủ tất cả các trường');
         return false;
       }
-      
+
       if (password.length < 6) {
         setError('Mật khẩu phải có ít nhất 6 ký tự');
         return false;
       }
-      
+
       if (!/^\d{10}$/.test(phone)) {
-        setError('Số điện thoại không hợp lệ');
+        setError('Số điện thoại phải có đúng 10 chữ số');
+        return false;
+      }
+
+      if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+        setError('Email không hợp lệ');
         return false;
       }
     }
-    
+
     setError(null);
     return true;
   };
-  
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
+
+  const handleSubmit = async () => {
     if (!validateForm()) return;
-    
+
     try {
       setLoading(true);
-      
+      setError(null);
+
+      // Thêm log để kiểm tra dữ liệu gửi lên API
+      console.log('Form data:', formData);
+
       if (isLogin) {
-        await login(formData.email, formData.password);
+        if (isStaffLogin) {
+          await authService.staffLogin(formData.email, formData.password);
+          navigate('/staff/dashboard');
+        } else {
+          await login(formData.email, formData.password);
+          const userRole = localStorage.getItem('userRole');
+          if (userRole === 'staff') {
+            navigate('/staff/dashboard');
+          } else {
+            navigate('/');
+          }
+        }
       } else {
-        await register(formData);
+        await register({
+          email: formData.email,
+          password: formData.password,
+          fullname: formData.name,
+          phoneNumber: formData.phone,
+        });
+        toast.success('Đăng ký thành công! Vui lòng đăng nhập để tiếp tục.');
+        setIsLogin(true);
+        setFormData({
+          email: formData.email,
+          password: '',
+          name: '',
+          phone: '',
+        });
       }
-      
-      // Nếu thành công, chuyển về trang chủ
-      navigate('/');
-      
     } catch (err) {
-      console.error('Authentication error:', err);
-      setError(authError || 'Đã có lỗi xảy ra. Vui lòng thử lại sau.');
+      // Thêm log để kiểm tra lỗi chi tiết
+      console.error('Submit error:', err);
+      setError(err.message || 'Đã có lỗi xảy ra. Vui lòng thử lại.');
     } finally {
       setLoading(false);
     }
   };
-  
+
   const toggleForm = () => {
     setIsLogin(!isLogin);
-    setError(null);
+    setIsStaffLogin(false);
+    setFormData({
+      email: '',
+      password: '',
+      name: '',
+      phone: '',
+    });
   };
 
   return (
     <PageContainer>
       <Header />
-      
       <ContentContainer>
         <FormContainer>
-          <PageTitle>{isLogin ? 'Đăng nhập' : 'Đăng ký'}</PageTitle>
-          
-          <Form onSubmit={handleSubmit}>
+          <PageTitle>{isLogin ? (isStaffLogin ? 'Đăng nhập Nhân viên' : 'Đăng nhập') : 'Đăng ký'}</PageTitle>
+          <Form>
             {!isLogin && (
               <FormGroup>
                 <FormIcon><FaUser /></FormIcon>
-                <Input 
-                  type="text" 
-                  name="name" 
-                  placeholder="Họ và tên" 
-                  value={formData.name} 
-                  onChange={handleChange} 
+                <Input
+                  type="text"
+                  name="name"
+                  placeholder="Họ và tên"
+                  value={formData.name}
+                  onChange={handleChange}
                 />
               </FormGroup>
             )}
-            
             <FormGroup>
               <FormIcon><FaEnvelope /></FormIcon>
-              <Input 
-                type="email" 
-                name="email" 
-                placeholder="Email" 
-                value={formData.email} 
-                onChange={handleChange} 
+              <Input
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={formData.email}
+                onChange={handleChange}
               />
             </FormGroup>
-            
             <FormGroup>
               <FormIcon><FaLock /></FormIcon>
-              <Input 
-                type="password" 
-                name="password" 
-                placeholder="Mật khẩu" 
-                value={formData.password} 
-                onChange={handleChange} 
+              <Input
+                type="password"
+                name="password"
+                placeholder="Mật khẩu"
+                value={formData.password}
+                onChange={handleChange}
               />
             </FormGroup>
-            
             {!isLogin && (
               <FormGroup>
                 <FormIcon><FaPhone /></FormIcon>
-                <Input 
-                  type="tel" 
-                  name="phone" 
-                  placeholder="Số điện thoại" 
-                  value={formData.phone} 
-                  onChange={handleChange} 
+                <Input
+                  type="tel"
+                  name="phone"
+                  placeholder="Số điện thoại"
+                  value={formData.phone}
+                  onChange={handleChange}
                 />
               </FormGroup>
             )}
-            
-            {error && <ErrorMessage>{error}</ErrorMessage>}
-            
-            <Button type="submit" disabled={loading}>
-              {loading 
-                ? 'Đang xử lý...' 
-                : isLogin ? 'Đăng nhập' : 'Đăng ký'
-              }
+            {(error || authError) && <ErrorMessage>{error || authError}</ErrorMessage>}
+            <Button onClick={handleSubmit} disabled={loading}>
+              {loading ? 'Đang xử lý...' : isLogin ? 'Đăng nhập' : 'Đăng ký'}
             </Button>
           </Form>
-          
           <ToggleContainer>
             <ToggleText>
               {isLogin ? 'Chưa có tài khoản?' : 'Đã có tài khoản?'}
