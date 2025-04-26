@@ -1,7 +1,9 @@
 ﻿using BAL.DTOs.Authentication;
+using BAL.Helpers;
 using BAL.Services.Interface;
 using DAL.Models;
 using DAL.Repository.Interface;
+using Infrastructure.Utils;
 using Microsoft.Extensions.Configuration;
 
 namespace BAL.Services.Implement
@@ -24,7 +26,7 @@ namespace BAL.Services.Implement
         public async Task<AuthenResultDto> LoginAsync(LoginDto loginDto)
         {
             var user = await _unitOfWork.UserRepository.GetAsync(
-                u => u.Email == loginDto.Email && u.Password == loginDto.Password,
+                u => u.Email == loginDto.Email && u.Password == HashPass.HashWithSHA256(loginDto.Password),
                 tracked: false
             );
 
@@ -52,7 +54,7 @@ namespace BAL.Services.Implement
             {
                 FullName = registerDto.Fullname,
                 Email = registerDto.Email,
-                Password = registerDto.Password,
+                Password = HashPass.HashWithSHA256(registerDto.Password),
             };
 
             var result = _unitOfWork.UserRepository.AddAsync(newUser);
