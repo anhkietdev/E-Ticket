@@ -123,11 +123,11 @@ var app = builder.Build();
 // Configure the HTTP request pipeline
 ConfigurePipeline(app);
 
-app.Run();
-
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.Run();
 
 // Configure Services
 void ConfigureServices(IServiceCollection services, IConfiguration configuration)
