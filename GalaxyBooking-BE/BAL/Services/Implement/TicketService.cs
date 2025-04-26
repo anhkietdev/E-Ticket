@@ -19,7 +19,7 @@ namespace BAL.Services.Implement
             _zaloPayService = zaloPayService;
             _mapper = mapper;
         }
-        public async Task<TicketResponseDTO> CreateTicket(TicketRequestDTO request)
+        public async Task<TicketResponseDTO> CreateTicket(Guid userId, TicketRequestDTO request)
         {
             var projection = await _unitOfWork.ProjectionRepository.GetAsync(p => p.Id == request.ProjectionId) ?? throw new ArgumentNullException("Not found projection");
             var film = await _unitOfWork.FilmRepository.GetAsync(p => p.Id == projection.FilmId) ?? throw new ArgumentNullException("Not found film");
@@ -53,7 +53,7 @@ namespace BAL.Services.Implement
                     PurchaseTime = DateTime.Now,
                     ProjectionId = request.ProjectionId,
                     SeatId = item,
-                    UserId = request.UserId,
+                    UserId = userId,
                     IsPaymentSuccess = false,
                     CreatedBy = request.CreatedBy,
                 };
@@ -73,7 +73,7 @@ namespace BAL.Services.Implement
 
             var requestZaloPay = new PaymentDTO
             {
-                UserId = request.UserId,
+                UserId = userId,
                 PaymentContent = $"Purchase ticket {DateTime.UtcNow}",
                 PaymentCurrency = "VND",
                 PaymentRefId = $"Cine-{Guid.NewGuid()}",

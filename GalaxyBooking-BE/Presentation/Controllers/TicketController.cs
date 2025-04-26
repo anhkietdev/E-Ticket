@@ -22,8 +22,7 @@ namespace Presentation.Controllers
             try
             {
                 request.CreatedBy = this.GetAuthorizedUserId();
-                request.UserId = this.GetAuthorizedUserId();
-                var createdTicket = await _ticketService.CreateTicket(request);
+                var createdTicket = await _ticketService.CreateTicket(this.GetAuthorizedUserId(), request);
                 return Ok(createdTicket);
             }
             catch (ArgumentNullException ex)
