@@ -126,5 +126,13 @@ namespace BAL.Services.Implement
 
             return true;
         }
+
+        public Task<ICollection<User>> GetAllAsync()
+        {
+            var users = _unitOfWork.UserRepository.GetAllAsync(
+                tracked: false
+            );
+            return users;
+        }
     }
 }

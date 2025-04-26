@@ -21,11 +21,8 @@ namespace Presentation.Controllers
         {
             try
             {
-                // Test 1: Kiểm tra kết nối cơ bản
                 bool canConnect = await _dbContext.Database.CanConnectAsync();
 
-                // Test 2: Thử đọc dữ liệu đơn giản
-                // Thay "Users" bằng tên bảng thực tế trong DB của bạn
                 var testQuery = await _dbContext.Database
                     .ExecuteSqlRawAsync("SELECT * FROM Users");
 
