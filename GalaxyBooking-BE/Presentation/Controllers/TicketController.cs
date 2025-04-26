@@ -1,5 +1,6 @@
 ﻿using BAL.DTOs;
 using BAL.Services.Interface;
+using DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Extension;
 
@@ -35,10 +36,18 @@ namespace Presentation.Controllers
         }
 
         [HttpGet]
-        [Route("getallticketbyuserid/{pageNumber}/{pageSize}")]
+        [Route("getallmyticket/{pageNumber}/{pageSize}")]
         public async Task<IActionResult> GetTicket(int pageNumber = 1, int pageSize = 10)
         {
             var result = await _ticketService.GetTicketByUserId(this.GetAuthorizedUserId(), pageNumber, pageSize);
+            return Ok(result);
+        }
+
+        [HttpGet]
+        [Route("getallticketbyuserid/{userId}/{pageNumber}/{pageSize}")]
+        public async Task<IActionResult> GetTicketByUserId(Guid userId, int pageNumber = 1, int pageSize = 10)
+        {
+            var result = await _ticketService.GetTicketByUserId(userId, pageNumber, pageSize);
             return Ok(result);
         }
 
