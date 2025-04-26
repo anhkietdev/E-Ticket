@@ -1,4 +1,5 @@
 ﻿using BAL.DTOs.Authentication;
+using DAL.Models;
 
 namespace BAL.Services.Interface
 {
@@ -8,6 +9,8 @@ namespace BAL.Services.Interface
         Task<AuthenResultDto> RegisterAsync(RegisterDto registerDto);
         Task ForgotPasswordAsync(string email);
         Task<bool> VerifyOtpAsync(VerifyOtpDto verifyDto);
+
+        Task<ICollection<User>> GetAllAsync();
 
     }
 }
