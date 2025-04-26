@@ -35,7 +35,7 @@ namespace Presentation.Controllers
         }
 
         [HttpGet]
-        [Route("getallticket/{pageNumber}/{pageSize}")]
+        [Route("getallticketbyuserid/{pageNumber}/{pageSize}")]
         public async Task<IActionResult> GetTicket(int pageNumber = 1, int pageSize = 10)
         {
             var result = await _ticketService.GetTicketByUserId(this.GetAuthorizedUserId(), pageNumber, pageSize);
