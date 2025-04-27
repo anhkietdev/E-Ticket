@@ -12,5 +12,6 @@ namespace BAL.Services.Interface
         Task<TicketDto> GetTicketById(Guid ticketId);
         Task<List<TicketDto>> UpdatePaymentByAppTransId();
         Task<bool> DeleteTicketById(Guid ticketId);
+        Task<bool> DeleteTicketByAppTransId(Guid apptransId);
     }
 }

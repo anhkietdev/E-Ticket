@@ -1,7 +1,6 @@
 ﻿using BAL.Constants;
-using BAL.DTOs.ZaloPay;
-using BAL.Services.Implement;
 using BAL.Services.Interface;
+using DAL.Common;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers
@@ -20,11 +19,16 @@ namespace Presentation.Controllers
         public async Task<IActionResult> CheckOrderStatus()
         {
             var checkStatus = await _service.CheckOrderStatus();
+            bool result = false;
             if (checkStatus == Constant.ZaloPayConfig.ZaloPaymentSuccessStatus)
             {
-               await _ticketService.UpdatePaymentByAppTransId();
+                result = (await _ticketService.UpdatePaymentByAppTransId()).Any();
             }
-            return Ok(true);
+            else if (checkStatus == Constant.ZaloPayConfig.ZaloPaymentErrorStatus)
+            {
+                result = await _ticketService.DeleteTicketByAppTransId(Guid.Parse(GlobalCache.AppTransIdCache));
+            }
+            return Ok(result);
         }
     }
 }

@@ -113,6 +113,19 @@ namespace BAL.Services.Implement
             };
         }
 
+        public async Task<bool> DeleteTicketByAppTransId(Guid apptransId)
+        {
+            var ticketLst = await _unitOfWork.TicketRepository.GetAllAsync(e => e.AppTransId == GlobalCache.AppTransIdCache);
+
+            foreach (var item in ticketLst)
+            {
+                item.IsDeleted = true;
+            }
+
+            await _unitOfWork.TicketRepository.UpdateRange(ticketLst);
+            return await _unitOfWork.SaveChangeAsync() > 0;
+        }
+
         public async Task<bool> DeleteTicketById(Guid ticketId)
         {
             var ticket = await _unitOfWork.TicketRepository.GetAsync(e => e.Id == ticketId) ?? throw new ArgumentNullException($"Ticket {nameof(ticketId)} not found");
