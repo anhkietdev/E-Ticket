@@ -9,11 +9,9 @@ namespace Presentation.Controllers
     public class TicketController : BaseController
     {
         private readonly ITicketService _ticketService;
-        private readonly IZaloPayService _zaloPayService;
-        public TicketController(ITicketService ticketService, IZaloPayService zaloPayService)
+        public TicketController(ITicketService ticketService)
         {
             _ticketService = ticketService;
-            _zaloPayService = zaloPayService;
         }
 
         [HttpPost]
@@ -56,6 +54,14 @@ namespace Presentation.Controllers
         public async Task<IActionResult> GetTickets(int pageNumber = 1, int pageSize = 10)
         {
             var result = await _ticketService.GetTickets(pageNumber, pageSize);
+            return Ok(result);
+        }
+
+        [HttpGet]
+        [Route("{ticketId}")]
+        public async Task<IActionResult> GetTicketById(Guid ticketId)
+        {
+            var result = await _ticketService.GetTicketById(ticketId);
             return Ok(result);
         }
 

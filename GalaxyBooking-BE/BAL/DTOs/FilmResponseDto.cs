@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using DAL.Models;
 using System.Text.Json.Serialization;
 
 namespace BAL.DTOs
@@ -15,6 +13,7 @@ namespace BAL.DTOs
         public DateTime ReleaseDate { get; set; }
         public string? ImageURL { get; set; }
         public string? TrailerURL { get; set; }
+        public FilmStatus Status { get; set; }
 
         [JsonIgnore]
         public virtual ICollection<FilmGenreDto> FilmGenres { get; set; } = new List<FilmGenreDto>();

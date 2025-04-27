@@ -1,4 +1,6 @@
-﻿namespace BAL.DTOs
+﻿using DAL.Models;
+
+namespace BAL.DTOs
 {
     public class FilmRequestDto
     {
@@ -16,5 +18,6 @@
         public string? TrailerURL { get; set; }
         public Guid? CreatedBy { get; set; }
         public Guid? UpdatedBy { get; set; }
+        public FilmStatus Status{ get; set; }
     }
 }

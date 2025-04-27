@@ -1,70 +1,55 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using BAL.Services.Implement;
+using BAL.Services.Interface;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Configuration;
+using System.Text;
 
 namespace Presentation.Extension
 {
     public static class ConfigureController
     {
-        public static IServiceCollection ResolveController(this IServiceCollection services, IConfiguration jwtSettings, byte[]secretKey)
+        public static IServiceCollection ResolveController(this IServiceCollection services, IConfigurationManager configuration)
         {
             services.AddControllers().AddJsonOptions(o =>
             {
                 o.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
             });
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+            var jwtSettings = new JwtSettings();
+            configuration.Bind(JwtSettings.SectionName, jwtSettings);
 
-                // Add JWT Authentication to Swagger
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            services.AddSingleton(Options.Create(jwtSettings));
+
+            var tokenSettings = new TokenSettings();
+            configuration.Bind(TokenSettings.SectionName, tokenSettings);
+
+            services.AddSingleton(Options.Create(tokenSettings));
+            services.AddScoped<ITokenGenerator, TokenGenerator>();
+
+            services
+                .AddAuthentication(scheme =>
                 {
-                    Description = "Enter 'Bearer {your JWT token}'",
-                    Name = "Authorization",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.Http,
-                    Scheme = "Bearer"
+                    scheme.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                    scheme.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = jwtSettings.Issuer,
+                        ValidAudience = jwtSettings.Audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(jwtSettings.SecretKey)
+                        ),
+                    };
                 });
-
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new List<string>()
-        }
-    });
-            });
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.RequireHttpsMetadata = false;
-                options.SaveToken = true;
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidIssuer = jwtSettings["Issuer"],
-                    ValidAudience = jwtSettings["Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(secretKey),
-                    ClockSkew = TimeSpan.Zero
-                };
-                options.Audience = "your_audience";
-                options.MapInboundClaims = false;
-            });
             return services;
         }
     }

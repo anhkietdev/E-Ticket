@@ -19,5 +19,6 @@
         public virtual ICollection<FilmGenre> FilmGenres { get; set; }
 
         public virtual ICollection<Projection> Projections { get; set; }
+        public FilmStatus Status { get; set; }
     }
 }

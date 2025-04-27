@@ -34,6 +34,7 @@ namespace BAL.Services.Implement
             film.CreatedAt = DateTime.Now;
             film.UpdatedAt = DateTime.Now;
             film.DeletedAt = null;
+            film.Status = filmDto.Status;
 
             await _unitOfWork.FilmRepository.AddAsync(film);
             await _unitOfWork.SaveAsync();
@@ -50,6 +51,7 @@ namespace BAL.Services.Implement
                 throw new Exception("Film not found or has been deleted");
 
             _mapper.Map(filmDto, film);
+            film.Status = filmDto.Status;
             film.UpdatedBy = filmDto.UpdatedBy;
             film.UpdatedAt = DateTime.Now;
 

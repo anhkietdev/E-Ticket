@@ -1,8 +1,4 @@
 ﻿using BAL.DTOs;
-using DAL.Models;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace BAL.Services.Interface
 {

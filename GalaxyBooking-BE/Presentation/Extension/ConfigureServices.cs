@@ -1,6 +1,8 @@
-﻿using BAL.DTOs;
+﻿using BAL.Constants;
+using BAL.DTOs;
 using BAL.Services.Implement;
 using BAL.Services.Interface;
+using BAL.Services.ZaloPay.Config;
 using DAL.Context;
 using DAL.Repository.Implement;
 using DAL.Repository.Interface;
@@ -32,6 +34,7 @@ namespace Presentation.Extension
             services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
 
             // Register services
+            services.AddHttpContextAccessor();
             services.AddScoped<IFilmService, FilmService>();
             services.AddScoped<IZaloPayService, ZaloPayService>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
@@ -44,6 +47,8 @@ namespace Presentation.Extension
             services.AddScoped<TokenSettings>();
             services.AddScoped<ITokenGenerator, TokenGenerator>();
             services.AddScoped<IEmailService, EmailService>();
+
+            services.Configure<ZaloPayConfig>(configuration.GetSection(Constant.ZaloPayConfig.ConfigName));
 
             // CORS policy
             services.AddCors(options =>

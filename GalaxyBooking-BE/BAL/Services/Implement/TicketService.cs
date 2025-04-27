@@ -39,17 +39,20 @@ namespace BAL.Services.Implement
 
             List<Ticket> ticketLst = new List<Ticket>();
             List<Seat> seatLst = new List<Seat>();
-            decimal totalPrice = 0;
             foreach (var item in request.SeatIds)
             {
-                var seat = await _unitOfWork.SeatRepository.GetAsync(s => s.Id == item);
+                var seat = await _unitOfWork.SeatRepository.GetAsync(s => s.Id == item) ?? throw new ArgumentNullException("Not found seat");
+                if (!seat.IsEnable)
+                {
+                    throw new Exception("One or more seats is disabled");
+                }
                 seat.IsEnable = false;
                 seatLst.Add(seat);
 
                 var ticket = new Ticket
                 {
                     Id = Guid.NewGuid(),
-                    Price = projection.Price,
+                    Price = seat.IsVip ? (projection.Price + (projection.Price * (decimal)0.2)) : projection.Price,
                     PurchaseTime = DateTime.Now,
                     ProjectionId = request.ProjectionId,
                     SeatId = item,
@@ -59,7 +62,6 @@ namespace BAL.Services.Implement
                 };
 
                 ticketLst.Add(ticket);
-                totalPrice += ticket.Price;
             }
 
             List<Item> itemLst = new List<Item>();
@@ -77,7 +79,7 @@ namespace BAL.Services.Implement
                 PaymentContent = $"Purchase ticket {DateTime.UtcNow}",
                 PaymentCurrency = "VND",
                 PaymentRefId = $"Cine-{Guid.NewGuid()}",
-                RequiredAmount = totalPrice,
+                RequiredAmount = request.TotalPrice,
                 BankCode = "zalopayapp",
                 TicketIds = ticketLst.Select(x => x.Id).ToList(),
                 ProjectionId = request.ProjectionId,
@@ -107,13 +109,13 @@ namespace BAL.Services.Implement
                 SeatAmount = request.SeatAmount,
                 SeatIds = _mapper.Map<List<SeatDto>>(seatLst),
                 RedirectUrl = returnStatus ? message : string.Empty,
-                TotalPrice = totalPrice,
+                TotalPrice = request.TotalPrice,
             };
         }
 
         public async Task<bool> DeleteTicketById(Guid ticketId)
         {
-           var ticket = await _unitOfWork.TicketRepository.GetAsync(e => e.Id == ticketId) ?? throw new ArgumentNullException($"Ticket {nameof(ticketId)} not found");
+            var ticket = await _unitOfWork.TicketRepository.GetAsync(e => e.Id == ticketId) ?? throw new ArgumentNullException($"Ticket {nameof(ticketId)} not found");
             ticket.IsDeleted = true;
             await _unitOfWork.TicketRepository.UpdateAsync(ticket);
             return await _unitOfWork.SaveChangeAsync() > 0;
@@ -141,58 +143,84 @@ namespace BAL.Services.Implement
             return ticketDto;
         }
 
-        public async Task<PagedDto<TicketDto>> GetTicketByUserId(Guid UserId, int pageNumber,
+        public async Task<PagedDto<TicketGroupResponseDTO>> GetTicketByUserId(Guid UserId, int pageNumber,
             int pageSize)
         {
-            var ticketLst = await _unitOfWork.TicketRepository.GetPagingAsync(e => e.UserId == UserId
+            var allTickets = await _unitOfWork.TicketRepository.GetPagingAsync(e => e.UserId == UserId
             , "Projection,Projection.Room,Projection.Film,Seat"
             , orderBy: e => e.CreatedAt
             , pageNumber: pageNumber
             , pageSize: pageSize);
 
-            var totalItems = ticketLst.Count;
-            var ticketDtos = ticketLst.Select(ticket => new TicketDto
-            {
-                Id = ticket.Id,
-                PurchaseTime = ticket.PurchaseTime,
-                ProjectionId = ticket.ProjectionId,
-                SeatId = ticket.SeatId,
-                UserId = ticket.UserId,
-                SeatNumber = ticket.Seat?.SeatNumber,
-                RoomNumber = ticket.Projection?.Room?.RoomNumber,
-                StartTime = ticket.Projection?.StartTime ?? DateTime.MinValue,
-                EndTime = ticket.Projection?.EndTime ?? DateTime.MinValue,
-                FilmId = ticket.Projection.FilmId,
-                Title = ticket.Projection.Film.Title,
-            }).ToList();
-            return new PagedDto<TicketDto>(pageNumber, pageSize, totalItems, ticketDtos);
+            var grouped = allTickets
+             .GroupBy(t => t.AppTransId)
+             .Select(group => new TicketGroupResponseDTO
+             {
+                 AppTransId = group.Key,
+                 Tickets = group.Select(ticket => new TicketDto
+                 {
+                     Id = ticket.Id,
+                     PurchaseTime = ticket.PurchaseTime,
+                     ProjectionId = ticket.ProjectionId,
+                     SeatId = ticket.SeatId,
+                     UserId = ticket.UserId,
+                     SeatNumber = ticket.Seat?.SeatNumber,
+                     RoomNumber = ticket.Projection?.Room?.RoomNumber,
+                     StartTime = ticket.Projection?.StartTime ?? DateTime.MinValue,
+                     EndTime = ticket.Projection?.EndTime ?? DateTime.MinValue,
+                     FilmId = ticket.Projection.FilmId,
+                     Title = ticket.Projection.Film.Title,
+                 }).ToList()
+             }).ToList();
+
+            // Paging the grouped result
+            var totalItems = grouped.Count;
+            var pagedGrouped = grouped
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            return new PagedDto<TicketGroupResponseDTO>(pageNumber, pageSize, totalItems, pagedGrouped);
         }
 
-        public async Task<PagedDto<TicketDto>> GetTickets(int pageNumber, int pageSize)
+        public async Task<PagedDto<TicketGroupResponseDTO>> GetTickets(int pageNumber, int pageSize)
         {
-            var ticketLst = await _unitOfWork.TicketRepository.GetPagingAsync(
+            var allTickets = await _unitOfWork.TicketRepository.GetPagingAsync(
                 filter: null
-               , "Projection,Projection.Room,Projection.Film,Seat"
-               , orderBy: e => e.CreatedAt
-               , pageNumber: pageNumber
-               , pageSize: pageSize);
+           , "Projection,Projection.Room,Projection.Film,Seat"
+           , orderBy: e => e.CreatedAt
+           , pageNumber: pageNumber
+           , pageSize: pageSize);
 
-            var totalItems = ticketLst.Count;
-            var ticketDtos = ticketLst.Select(ticket => new TicketDto
-            {
-                Id = ticket.Id,
-                PurchaseTime = ticket.PurchaseTime,
-                ProjectionId = ticket.ProjectionId,
-                SeatId = ticket.SeatId,
-                UserId = ticket.UserId,
-                SeatNumber = ticket.Seat?.SeatNumber,
-                RoomNumber = ticket.Projection?.Room?.RoomNumber,
-                StartTime = ticket.Projection?.StartTime ?? DateTime.MinValue,
-                EndTime = ticket.Projection?.EndTime ?? DateTime.MinValue,
-                FilmId = ticket.Projection.FilmId,
-                Title = ticket.Projection.Film.Title,
-            }).ToList();
-            return new PagedDto<TicketDto>(pageNumber, pageSize, totalItems, ticketDtos);
+            var grouped = allTickets
+             .GroupBy(t => t.AppTransId)
+             .Select(group => new TicketGroupResponseDTO
+             {
+                 AppTransId = group.Key,
+                 Tickets = group.Select(ticket => new TicketDto
+                 {
+                     Id = ticket.Id,
+                     PurchaseTime = ticket.PurchaseTime,
+                     ProjectionId = ticket.ProjectionId,
+                     SeatId = ticket.SeatId,
+                     UserId = ticket.UserId,
+                     SeatNumber = ticket.Seat?.SeatNumber,
+                     RoomNumber = ticket.Projection?.Room?.RoomNumber,
+                     StartTime = ticket.Projection?.StartTime ?? DateTime.MinValue,
+                     EndTime = ticket.Projection?.EndTime ?? DateTime.MinValue,
+                     FilmId = ticket.Projection.FilmId,
+                     Title = ticket.Projection.Film.Title,
+                 }).ToList()
+             }).ToList();
+
+            // Paging the grouped result
+            var totalItems = grouped.Count;
+            var pagedGrouped = grouped
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            return new PagedDto<TicketGroupResponseDTO>(pageNumber, pageSize, totalItems, pagedGrouped);
         }
 
         public async Task<List<TicketDto>> UpdatePaymentByAppTransId()
