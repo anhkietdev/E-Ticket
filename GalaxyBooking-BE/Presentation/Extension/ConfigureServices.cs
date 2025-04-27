@@ -44,6 +44,7 @@ namespace Presentation.Extension
             services.AddScoped<IGenreService, GenreService>();
             services.AddScoped<ITicketService, TicketService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IFilmGenreService, FilmGenreService>();
             services.AddScoped<TokenSettings>();
             services.AddScoped<ITokenGenerator, TokenGenerator>();
             services.AddScoped<IEmailService, EmailService>();
