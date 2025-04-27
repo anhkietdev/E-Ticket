@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Presentation.Controllers
 {
-    // Tạo một controller mới hoặc thêm vào controller hiện có
     [ApiController]
     [Route("api/[controller]")]
     public class TestController : ControllerBase
