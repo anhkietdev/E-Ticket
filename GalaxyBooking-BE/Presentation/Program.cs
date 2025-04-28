@@ -1,6 +1,7 @@
+using BAL.Services.Interface;
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Presentation.Extension;
-using System.Text;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,8 +11,21 @@ string connectionString = builder.Configuration.GetConnectionString("DefaultConn
 builder.Services.ResolveDAL(connectionString)
     .ResolveServices(builder.Configuration)
     .ResolveController(builder.Configuration)
-    .AddJwtSwagger();
+.AddJwtSwagger();
+
+builder.Services.AddHangfire(config => config.UseSqlServerStorage(connectionString));
+
+builder.Services.AddHangfireServer();
+
 var app = builder.Build();
+
+var recurringJobManager = app.Services.GetRequiredService<IRecurringJobManager>();
+
+recurringJobManager.AddOrUpdate<IFilmService>(
+    recurringJobId: "update-film-status-job",
+    methodCall: service => service.UpdateFilmStatusCronJobs(),
+    cronExpression: "0 23 * * *"
+);
 
 app.UseSwagger();
 
@@ -26,5 +40,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseHangfireDashboard();
+
 app.Run();
 

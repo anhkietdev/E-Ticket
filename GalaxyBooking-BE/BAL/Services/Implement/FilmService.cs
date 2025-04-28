@@ -191,5 +191,33 @@ namespace BAL.Services.Implement
             var filmDtos = _mapper.Map<ICollection<FilmResponseDto>>(films);
             return new PagedDto<FilmResponseDto>(pageNumber, pageSize, totalItems, filmDtos);
         }
+
+        public async Task<bool> UpdateFilmStatusCronJobs()
+        {
+            var films = await _unitOfWork.FilmRepository.GetAllAsync();
+            var now = DateTime.Now;
+            List<Film> filmsUpdate = new List<Film>();
+            foreach (var item in films.ToList())
+            {
+                if (now < item.ReleaseDate)
+                {
+                    item.Status = FilmStatus.New;
+                    filmsUpdate.Add(item);
+                }
+                else if (now >= item.ReleaseDate && now <= item.ReleaseDate.AddMonths(1))
+                {
+                    item.Status = FilmStatus.InProgress;
+                    filmsUpdate.Add(item);
+                }
+                else if (now > item.ReleaseDate.AddMonths(1))
+                {
+                    item.Status = FilmStatus.End;
+                    filmsUpdate.Add(item);
+                }
+            }
+
+            await _unitOfWork.FilmRepository.UpdateRange(filmsUpdate);
+            return await _unitOfWork.SaveChangeAsync() > 0;
+        }
     }
 }

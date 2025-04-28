@@ -33,5 +33,6 @@ namespace BAL.Services.Interface
         Task<IEnumerable<FilmResponseDto>> FindByTitleAsync(string title);
         Task<IEnumerable<FilmResponseDto>> FindByDirectorAsync(string director);
         Task<IEnumerable<FilmResponseDto>> FindByReleaseDateAsync(DateTime releaseDate);
+        Task<bool> UpdateFilmStatusCronJobs();
     }
 }

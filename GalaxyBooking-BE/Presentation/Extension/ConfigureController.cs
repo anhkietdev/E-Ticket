@@ -3,8 +3,6 @@ using BAL.Services.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using System.Configuration;
 using System.Text;
 
 namespace Presentation.Extension
