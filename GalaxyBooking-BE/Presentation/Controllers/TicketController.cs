@@ -58,6 +58,14 @@ namespace Presentation.Controllers
         }
 
         [HttpGet]
+        [Route("geticketbycurrentapptransid")]
+        public async Task<IActionResult> GetTicketByCurrentAppTransId()
+        {
+            var result = await _ticketService.GetTicketsByCurrentAppTransId();
+            return Ok(result);
+        }
+
+        [HttpGet]
         [Route("{ticketId}")]
         public async Task<IActionResult> GetTicketById(Guid ticketId)
         {

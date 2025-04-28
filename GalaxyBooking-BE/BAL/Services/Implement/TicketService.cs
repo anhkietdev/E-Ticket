@@ -236,6 +236,37 @@ namespace BAL.Services.Implement
             return new PagedDto<TicketGroupResponseDTO>(pageNumber, pageSize, totalItems, pagedGrouped);
         }
 
+        public async Task<List<TicketGroupResponseDTO>> GetTicketsByCurrentAppTransId()
+        {
+            var allTickets = await _unitOfWork.TicketRepository.GetAllAsync(e => e.AppTransId == GlobalCache.AppTransIdCache
+         , "Projection,Projection.Room,Projection.Film,Seat"
+         , orderBy: e => e.CreatedAt);
+
+            var grouped = allTickets
+             .GroupBy(t => t.AppTransId)
+             .Select(group => new TicketGroupResponseDTO
+             {
+                 AppTransId = group.Key,
+                 Tickets = group.Select(ticket => new TicketDto
+                 {
+                     Id = ticket.Id,
+                     PurchaseTime = ticket.PurchaseTime,
+                     ProjectionId = ticket.ProjectionId,
+                     SeatId = ticket.SeatId,
+                     UserId = ticket.UserId,
+                     SeatNumber = ticket.Seat?.SeatNumber,
+                     RoomNumber = ticket.Projection?.Room?.RoomNumber,
+                     StartTime = ticket.Projection?.StartTime ?? DateTime.MinValue,
+                     EndTime = ticket.Projection?.EndTime ?? DateTime.MinValue,
+                     FilmId = ticket.Projection.FilmId,
+                     Title = ticket.Projection.Film.Title,
+                 }).ToList()
+             }).ToList();
+
+            GlobalCache.AppTransIdCache = string.Empty;
+            return grouped;
+        }
+
         public async Task<List<TicketDto>> UpdatePaymentByAppTransId()
         {
             var ticketLst = await _unitOfWork.TicketRepository.GetAllAsync(e => e.AppTransId == GlobalCache.AppTransIdCache);
