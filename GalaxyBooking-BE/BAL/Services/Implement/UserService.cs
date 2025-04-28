@@ -36,7 +36,7 @@ namespace BAL.Services.Implement
         public async Task<AuthenResultDto> LoginAsync(LoginDto loginDto)
         {
             var user = await _unitOfWork.UserRepository.GetAsync(
-                u => u.Email == loginDto.Email && u.Password == HashPass.HashWithSHA256(loginDto.Password),
+                u => u.Email == loginDto.Email,
                 tracked: false
             );
 
@@ -45,6 +45,18 @@ namespace BAL.Services.Implement
                 return new AuthenResultDto
                 {
                     IsSuccess = false,
+                    RefreshToken = "Wrong email"
+                };
+            }
+
+            var hashPass = HashPass.HashWithSHA256(loginDto.Password);
+
+            if (hashPass != user.Password)
+            {
+                return new AuthenResultDto
+                {
+                    IsSuccess = false,
+                    RefreshToken = "Wrong password"
                 };
             }
 
