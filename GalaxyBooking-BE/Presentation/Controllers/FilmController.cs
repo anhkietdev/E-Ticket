@@ -2,8 +2,6 @@
 using BAL.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Extension;
-using System;
-using System.Threading.Tasks;
 
 namespace Presentation.Controllers
 {
@@ -34,8 +32,9 @@ namespace Presentation.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetNewFilms([FromQuery] int pageNumber = 1,
-            [FromQuery] int pageSize = 10)
+        [Route("getnewfilms/{pageNumber}/{pageSize}")]
+        public async Task<IActionResult> GetNewFilms(int pageNumber = 1,
+            int pageSize = 10)
         {
             try
             {
@@ -49,8 +48,9 @@ namespace Presentation.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetInProgressFilms([FromQuery] int pageNumber = 1,
-            [FromQuery] int pageSize = 10)
+        [Route("getinprogressfilms/{pageNumber}/{pageSize}")]
+        public async Task<IActionResult> GetInProgressFilms(int pageNumber = 1,
+             int pageSize = 10)
         {
             try
             {
@@ -64,8 +64,9 @@ namespace Presentation.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetEndFilms([FromQuery] int pageNumber = 1,
-            [FromQuery] int pageSize = 10)
+        [Route("getendfilms/{pageNumber}/{pageSize}")]
+        public async Task<IActionResult> GetEndFilms(int pageNumber = 1,
+           int pageSize = 10)
         {
             try
             {
