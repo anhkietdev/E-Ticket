@@ -178,7 +178,7 @@ namespace BAL.Services.Implement
         public async Task<PagedDto<FilmResponseDto>> GetEndFilmPagingAsync(int pageNumber, int pageSize)
         {
             Expression<Func<Film, bool>> filter = f =>
-             !f.IsDeleted && f.Status == FilmStatus.End;
+             f.IsDeleted && f.Status == FilmStatus.End;
 
             var films = await _unitOfWork.FilmRepository.GetPagingAsync(
                 filter: filter,
@@ -212,6 +212,7 @@ namespace BAL.Services.Implement
                 else if (now > item.ReleaseDate.AddMonths(1))
                 {
                     item.Status = FilmStatus.End;
+                    item.IsDeleted = true;
                     filmsUpdate.Add(item);
                 }
             }
