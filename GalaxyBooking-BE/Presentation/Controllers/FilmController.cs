@@ -33,6 +33,51 @@ namespace Presentation.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetNewFilms([FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            try
+            {
+                var films = await _filmService.GetNewFilmPagingAsync(pageNumber, pageSize);
+                return Ok(films);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetInProgressFilms([FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            try
+            {
+                var films = await _filmService.GetInprogressFilmPagingAsync(pageNumber, pageSize);
+                return Ok(films);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetEndFilms([FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            try
+            {
+                var films = await _filmService.GetEndFilmPagingAsync(pageNumber, pageSize);
+                return Ok(films);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
         // GET: api/film/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetFilmById(Guid id)

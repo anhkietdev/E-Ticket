@@ -15,6 +15,20 @@ namespace BAL.Services.Interface
             string? director = null,
             DateTime? releaseDate = null
         );
+
+        Task<PagedDto<FilmResponseDto>> GetNewFilmPagingAsync(
+            int pageNumber,
+            int pageSize
+        );
+
+        Task<PagedDto<FilmResponseDto>> GetInprogressFilmPagingAsync(
+            int pageNumber,
+            int pageSize
+        );
+        Task<PagedDto<FilmResponseDto>> GetEndFilmPagingAsync(
+            int pageNumber,
+            int pageSize
+        );
         Task<IEnumerable<FilmResponseDto>> GetFilmsAsync();
         Task<IEnumerable<FilmResponseDto>> FindByTitleAsync(string title);
         Task<IEnumerable<FilmResponseDto>> FindByDirectorAsync(string director);
