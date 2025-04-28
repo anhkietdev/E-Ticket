@@ -24,6 +24,12 @@ namespace BAL.Services.Implement
 
         public async Task<FilmGenresResponseDto> CreateAsync(FilmGenreRequestDto filmGenreDto)
         {
+            //Validate of genre is exist?
+            var checkGerneOrFilmExist = await _unitOfWork.FilmGenreRepository
+                .GetAsync(fg => fg.FilmId == filmGenreDto.FilmId && fg.GenreId == filmGenreDto.GenreId && !fg.IsDeleted);
+            if (checkGerneOrFilmExist != null)
+                throw new Exception("Film genre already exists.");
+
             if (filmGenreDto == null)
                 throw new ArgumentNullException(nameof(filmGenreDto));
 
