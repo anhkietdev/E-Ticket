@@ -32,13 +32,12 @@ namespace Presentation.Controllers
         }
 
         [HttpGet]
-        [Route("getnewfilms/{pageNumber}/{pageSize}")]
-        public async Task<IActionResult> GetNewFilms(int pageNumber = 1,
-            int pageSize = 10)
+        [Route("getnewfilms")]
+        public async Task<IActionResult> GetNewFilms()
         {
             try
             {
-                var films = await _filmService.GetNewFilmPagingAsync(pageNumber, pageSize);
+                var films = await _filmService.GetNewFilmPagingAsync();
                 return Ok(films);
             }
             catch (Exception ex)
@@ -48,13 +47,12 @@ namespace Presentation.Controllers
         }
 
         [HttpGet]
-        [Route("getinprogressfilms/{pageNumber}/{pageSize}")]
-        public async Task<IActionResult> GetInProgressFilms(int pageNumber = 1,
-             int pageSize = 10)
+        [Route("getinprogressfilms")]
+        public async Task<IActionResult> GetInProgressFilms()
         {
             try
             {
-                var films = await _filmService.GetInprogressFilmPagingAsync(pageNumber, pageSize);
+                var films = await _filmService.GetInprogressFilmPagingAsync();
                 return Ok(films);
             }
             catch (Exception ex)
@@ -64,13 +62,12 @@ namespace Presentation.Controllers
         }
 
         [HttpGet]
-        [Route("getendfilms/{pageNumber}/{pageSize}")]
-        public async Task<IActionResult> GetEndFilms(int pageNumber = 1,
-           int pageSize = 10)
+        [Route("getendfilms")]
+        public async Task<IActionResult> GetEndFilms()
         {
             try
             {
-                var films = await _filmService.GetEndFilmPagingAsync(pageNumber, pageSize);
+                var films = await _filmService.GetEndFilmPagingAsync();
                 return Ok(films);
             }
             catch (Exception ex)

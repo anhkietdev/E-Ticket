@@ -141,57 +141,6 @@ namespace BAL.Services.Implement
             return _mapper.Map<IEnumerable<FilmResponseDto>>(films);
         }
 
-        public async Task<PagedDto<FilmResponseDto>> GetNewFilmPagingAsync(int pageNumber, int pageSize)
-        {
-            Expression<Func<Film, bool>> filter = f =>
-             f.Status == FilmStatus.New;
-
-            var films = await _unitOfWork.FilmRepository.GetPagingAsync(
-                filter: filter,
-                includeProperties: "FilmGenres",
-                orderBy: f => f.Title,
-                pageNumber: pageNumber,
-                pageSize: pageSize);
-
-            var totalItems = await _unitOfWork.FilmRepository.CountAsync(filter);
-            var filmDtos = _mapper.Map<ICollection<FilmResponseDto>>(films);
-            return new PagedDto<FilmResponseDto>(pageNumber, pageSize, totalItems, filmDtos);
-        }
-
-        public async Task<PagedDto<FilmResponseDto>> GetInprogressFilmPagingAsync(int pageNumber, int pageSize)
-        {
-            Expression<Func<Film, bool>> filter = f =>
-             f.Status == FilmStatus.InProgress;
-
-            var films = await _unitOfWork.FilmRepository.GetPagingAsync(
-                filter: filter,
-                includeProperties: "FilmGenres",
-                orderBy: f => f.Title,
-                pageNumber: pageNumber,
-                pageSize: pageSize);
-
-            var totalItems = await _unitOfWork.FilmRepository.CountAsync(filter);
-            var filmDtos = _mapper.Map<ICollection<FilmResponseDto>>(films);
-            return new PagedDto<FilmResponseDto>(pageNumber, pageSize, totalItems, filmDtos);
-        }
-
-        public async Task<PagedDto<FilmResponseDto>> GetEndFilmPagingAsync(int pageNumber, int pageSize)
-        {
-            Expression<Func<Film, bool>> filter = f =>
-             f.IsDeleted && f.Status == FilmStatus.End;
-
-            var films = await _unitOfWork.FilmRepository.GetPagingAsync(
-                filter: filter,
-                includeProperties: "FilmGenres",
-                orderBy: f => f.Title,
-                pageNumber: pageNumber,
-                pageSize: pageSize);
-
-            var totalItems = await _unitOfWork.FilmRepository.CountAsync(filter);
-            var filmDtos = _mapper.Map<ICollection<FilmResponseDto>>(films);
-            return new PagedDto<FilmResponseDto>(pageNumber, pageSize, totalItems, filmDtos);
-        }
-
         public async Task<bool> UpdateFilmStatusCronJobs()
         {
             var films = await _unitOfWork.FilmRepository.GetAllAsync();
@@ -219,6 +168,30 @@ namespace BAL.Services.Implement
 
             await _unitOfWork.FilmRepository.UpdateRange(filmsUpdate);
             return await _unitOfWork.SaveChangeAsync() > 0;
+        }
+
+        public async Task<IEnumerable<FilmResponseDto>> GetNewFilmPagingAsync()
+        {
+            var films = await _unitOfWork.FilmRepository.GetAllAsync(
+                filter: f => !f.IsDeleted && f.Status == FilmStatus.New,
+                includeProperties: "FilmGenres.Genre,Projections");
+            return _mapper.Map<IEnumerable<FilmResponseDto>>(films);
+        }
+
+        public async Task<IEnumerable<FilmResponseDto>> GetInprogressFilmPagingAsync()
+        {
+            var films = await _unitOfWork.FilmRepository.GetAllAsync(
+                filter: f => !f.IsDeleted && f.Status == FilmStatus.InProgress,
+                includeProperties: "FilmGenres.Genre,Projections");
+            return _mapper.Map<IEnumerable<FilmResponseDto>>(films);
+        }
+
+        public async Task<IEnumerable<FilmResponseDto>> GetEndFilmPagingAsync()
+        {
+            var films = await _unitOfWork.FilmRepository.GetAllAsync(
+                filter: f => !f.IsDeleted && f.Status == FilmStatus.End,
+                includeProperties: "FilmGenres.Genre,Projections");
+            return _mapper.Map<IEnumerable<FilmResponseDto>>(films);
         }
     }
 }
