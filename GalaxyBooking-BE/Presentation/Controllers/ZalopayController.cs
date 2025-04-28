@@ -19,16 +19,17 @@ namespace Presentation.Controllers
         public async Task<IActionResult> CheckOrderStatus()
         {
             var checkStatus = await _service.CheckOrderStatus();
-            bool result = false;
             if (checkStatus == Constant.ZaloPayConfig.ZaloPaymentSuccessStatus)
             {
-                result = (await _ticketService.UpdatePaymentByAppTransId()).Any();
+                await _ticketService.UpdatePaymentByAppTransId();
+                return Ok(true);
             }
-            else if (checkStatus == Constant.ZaloPayConfig.ZaloPaymentErrorStatus)
+            if (checkStatus == Constant.ZaloPayConfig.ZaloPaymentErrorStatus)
             {
-                result = await _ticketService.DeleteTicketByAppTransId(Guid.Parse(GlobalCache.AppTransIdCache));
+                await _ticketService.DeleteTicketByAppTransId(Guid.Parse(GlobalCache.AppTransIdCache));
+                return Ok(false);
             }
-            return Ok(result);
+            return Ok(false);
         }
     }
 }
