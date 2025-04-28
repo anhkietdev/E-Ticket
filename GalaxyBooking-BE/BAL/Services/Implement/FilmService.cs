@@ -144,7 +144,7 @@ namespace BAL.Services.Implement
         public async Task<PagedDto<FilmResponseDto>> GetNewFilmPagingAsync(int pageNumber, int pageSize)
         {
             Expression<Func<Film, bool>> filter = f =>
-             !f.IsDeleted && f.Status == FilmStatus.New;
+             f.Status == FilmStatus.New;
 
             var films = await _unitOfWork.FilmRepository.GetPagingAsync(
                 filter: filter,
@@ -161,7 +161,7 @@ namespace BAL.Services.Implement
         public async Task<PagedDto<FilmResponseDto>> GetInprogressFilmPagingAsync(int pageNumber, int pageSize)
         {
             Expression<Func<Film, bool>> filter = f =>
-             !f.IsDeleted && f.Status == FilmStatus.InProgress;
+             f.Status == FilmStatus.InProgress;
 
             var films = await _unitOfWork.FilmRepository.GetPagingAsync(
                 filter: filter,
