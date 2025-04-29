@@ -110,6 +110,7 @@ namespace BAL.Services.Implement
                 SeatIds = _mapper.Map<List<SeatDto>>(seatLst),
                 RedirectUrl = returnStatus ? message : string.Empty,
                 TotalPrice = request.TotalPrice,
+                AppTransId = GlobalCache.AppTransIdCache,
             };
         }
 
@@ -178,11 +179,14 @@ namespace BAL.Services.Implement
                      SeatId = ticket.SeatId,
                      UserId = ticket.UserId,
                      SeatNumber = ticket.Seat?.SeatNumber,
+                     Row = ticket.Seat.Row,
+                     SeatName = ticket.Seat.Row + ticket.Seat?.SeatNumber,
                      RoomNumber = ticket.Projection?.Room?.RoomNumber,
                      StartTime = ticket.Projection?.StartTime ?? DateTime.MinValue,
                      EndTime = ticket.Projection?.EndTime ?? DateTime.MinValue,
                      FilmId = ticket.Projection.FilmId,
                      Title = ticket.Projection.Film.Title,
+                     IsPaymentSuccess = ticket.IsPaymentSuccess
                  }).ToList()
              }).ToList();
 
@@ -218,11 +222,14 @@ namespace BAL.Services.Implement
                      SeatId = ticket.SeatId,
                      UserId = ticket.UserId,
                      SeatNumber = ticket.Seat?.SeatNumber,
+                     Row = ticket.Seat.Row,
+                     SeatName = ticket.Seat?.SeatNumber + ticket.Seat.Row,
                      RoomNumber = ticket.Projection?.Room?.RoomNumber,
                      StartTime = ticket.Projection?.StartTime ?? DateTime.MinValue,
                      EndTime = ticket.Projection?.EndTime ?? DateTime.MinValue,
                      FilmId = ticket.Projection.FilmId,
                      Title = ticket.Projection.Film.Title,
+                     IsPaymentSuccess = ticket.IsPaymentSuccess
                  }).ToList()
              }).ToList();
 
@@ -234,6 +241,38 @@ namespace BAL.Services.Implement
                 .ToList();
 
             return new PagedDto<TicketGroupResponseDTO>(pageNumber, pageSize, totalItems, pagedGrouped);
+        }
+
+        public async Task<List<TicketGroupResponseDTO>> GetTicketsByCurrentAppTransId()
+        {
+            var allTickets = await _unitOfWork.TicketRepository.GetAllAsync(e => e.AppTransId == GlobalCache.AppTransIdCache
+         , "Projection,Projection.Room,Projection.Film,Seat"
+         , orderBy: e => e.CreatedAt);
+
+            var grouped = allTickets
+             .GroupBy(t => t.AppTransId)
+             .Select(group => new TicketGroupResponseDTO
+             {
+                 AppTransId = group.Key,
+                 Tickets = group.Select(ticket => new TicketDto
+                 {
+                     Id = ticket.Id,
+                     PurchaseTime = ticket.PurchaseTime,
+                     ProjectionId = ticket.ProjectionId,
+                     SeatId = ticket.SeatId,
+                     UserId = ticket.UserId,
+                     SeatNumber = ticket.Seat?.SeatNumber,
+                     Row = ticket.Seat.Row,
+                     SeatName = ticket.Seat.Row + ticket.Seat?.SeatNumber,
+                     RoomNumber = ticket.Projection?.Room?.RoomNumber,
+                     StartTime = ticket.Projection?.StartTime ?? DateTime.MinValue,
+                     EndTime = ticket.Projection?.EndTime ?? DateTime.MinValue,
+                     FilmId = ticket.Projection.FilmId,
+                     Title = ticket.Projection.Film.Title,
+                 }).ToList()
+             }).ToList();
+
+            return grouped;
         }
 
         public async Task<List<TicketDto>> UpdatePaymentByAppTransId()

@@ -9,6 +9,7 @@ namespace BAL.Services.Interface
             int pageSize);
         Task<PagedDto<TicketGroupResponseDTO>> GetTickets(int pageNumber,
             int pageSize);
+        Task<List<TicketGroupResponseDTO>> GetTicketsByCurrentAppTransId();
         Task<TicketDto> GetTicketById(Guid ticketId);
         Task<List<TicketDto>> UpdatePaymentByAppTransId();
         Task<bool> DeleteTicketById(Guid ticketId);

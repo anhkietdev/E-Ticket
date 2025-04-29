@@ -16,19 +16,10 @@ namespace BAL.Services.Interface
             DateTime? releaseDate = null
         );
 
-        Task<PagedDto<FilmResponseDto>> GetNewFilmPagingAsync(
-            int pageNumber,
-            int pageSize
-        );
+        Task<IEnumerable<FilmResponseDto>> GetNewFilmPagingAsync();
 
-        Task<PagedDto<FilmResponseDto>> GetInprogressFilmPagingAsync(
-            int pageNumber,
-            int pageSize
-        );
-        Task<PagedDto<FilmResponseDto>> GetEndFilmPagingAsync(
-            int pageNumber,
-            int pageSize
-        );
+        Task<IEnumerable<FilmResponseDto>> GetInprogressFilmPagingAsync();
+        Task<IEnumerable<FilmResponseDto>> GetEndFilmPagingAsync();
         Task<IEnumerable<FilmResponseDto>> GetFilmsAsync();
         Task<IEnumerable<FilmResponseDto>> FindByTitleAsync(string title);
         Task<IEnumerable<FilmResponseDto>> FindByDirectorAsync(string director);

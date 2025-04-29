@@ -15,6 +15,7 @@
         public string FIlmName { get; set; }
         public RoomDto Room { get; set; }
         public FilmDto Film { get; set; }
+        public string AppTransId { get; set; }
 
     }
 }
