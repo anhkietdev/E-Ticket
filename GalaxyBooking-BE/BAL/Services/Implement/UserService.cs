@@ -81,6 +81,15 @@ namespace BAL.Services.Implement
                 Password = HashPass.HashWithSHA256(registerDto.Password),
             };
 
+            var check = _unitOfWork.UserRepository.GetAsync(
+                u => u.Email == registerDto.Email,
+                tracked: false
+            );
+
+            if (check != null) { 
+                throw new Exception("Email already exists");
+            }
+
             await _unitOfWork.UserRepository.AddAsync(newUser);
             await _unitOfWork.SaveAsync();
 
