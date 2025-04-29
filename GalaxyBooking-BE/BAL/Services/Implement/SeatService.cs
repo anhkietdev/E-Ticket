@@ -158,7 +158,7 @@ namespace BAL.Services.Implement
 
         public async Task<IEnumerable<SeatResponseDto>> GetAllSeatByRoomId(Guid id)
         {
-            var seats = await _unitOfWork.SeatRepository.GetAllAsync(e => e.RoomId == id, includeProperties: "Room,Tickets") ?? throw new ArgumentNullException("Room id is not valid");
+            var seats = await _unitOfWork.SeatRepository.GetAllAsync(e => e.RoomId == id, includeProperties: "Room,Tickets", orderBy: e => e.Row) ?? throw new ArgumentNullException("Room id is not valid");
 
             return _mapper.Map<IEnumerable<SeatResponseDto>>(seats);
 
