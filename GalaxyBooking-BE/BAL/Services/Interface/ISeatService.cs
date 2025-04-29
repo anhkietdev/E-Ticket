@@ -1,8 +1,4 @@
 ﻿using BAL.DTOs;
-using DAL.Models;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace BAL.Services.Interface
 {
@@ -20,5 +16,6 @@ namespace BAL.Services.Interface
             string? row = null);
         Task<IEnumerable<SeatResponseDto>> GetAllAsync();
         Task<SeatResponseDto> FindByIdAsync(Guid id);
+        Task<IEnumerable<SeatResponseDto>> GetAllSeatByRoomId(Guid id);
     }
 }

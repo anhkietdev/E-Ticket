@@ -147,5 +147,21 @@ namespace Presentation.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+        [HttpGet("getseatbyroomid/{id}")]
+        public async Task<IActionResult> GetSeatByRoomId(Guid id)
+        {
+            try
+            {
+                var seat = await _seatService.GetAllSeatByRoomId(id);
+                return Ok(seat);
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("not found or has been deleted"))
+                    return NotFound(ex.Message);
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
     }
 }

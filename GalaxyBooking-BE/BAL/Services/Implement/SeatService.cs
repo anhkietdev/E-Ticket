@@ -3,11 +3,7 @@ using BAL.DTOs;
 using BAL.Services.Interface;
 using DAL.Models;
 using DAL.Repository.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 
 namespace BAL.Services.Implement
 {
@@ -158,6 +154,14 @@ namespace BAL.Services.Implement
                 throw new Exception("Seat not found or has been deleted");
 
             return _mapper.Map<SeatResponseDto>(seat);
+        }
+
+        public async Task<IEnumerable<SeatResponseDto>> GetAllSeatByRoomId(Guid id)
+        {
+            var seats = await _unitOfWork.SeatRepository.GetAllAsync(e => e.RoomId == id, includeProperties: "Room,Tickets") ?? throw new ArgumentNullException("Room id is not valid");
+
+            return _mapper.Map<IEnumerable<SeatResponseDto>>(seats);
+
         }
     }
 }
