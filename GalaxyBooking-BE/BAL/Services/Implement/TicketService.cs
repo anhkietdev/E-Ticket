@@ -42,10 +42,10 @@ namespace BAL.Services.Implement
             foreach (var item in request.SeatIds)
             {
                 var seat = await _unitOfWork.SeatRepository.GetAsync(s => s.Id == item) ?? throw new ArgumentNullException("Not found seat");
-                if (!seat.IsEnable)
-                {
-                    throw new Exception("One or more seats is disabled");
-                }
+                //if (!seat.IsEnable)
+                //{
+                //    throw new Exception("One or more seats is disabled");
+                //}
                 seat.IsEnable = false;
                 seatLst.Add(seat);
 
