@@ -179,11 +179,14 @@ namespace BAL.Services.Implement
                      SeatId = ticket.SeatId,
                      UserId = ticket.UserId,
                      SeatNumber = ticket.Seat?.SeatNumber,
+                     Row = ticket.Seat.Row,
+                     SeatName = ticket.Seat.Row + ticket.Seat?.SeatNumber,
                      RoomNumber = ticket.Projection?.Room?.RoomNumber,
                      StartTime = ticket.Projection?.StartTime ?? DateTime.MinValue,
                      EndTime = ticket.Projection?.EndTime ?? DateTime.MinValue,
                      FilmId = ticket.Projection.FilmId,
                      Title = ticket.Projection.Film.Title,
+                     IsPaymentSuccess = ticket.IsPaymentSuccess
                  }).ToList()
              }).ToList();
 
@@ -226,6 +229,7 @@ namespace BAL.Services.Implement
                      EndTime = ticket.Projection?.EndTime ?? DateTime.MinValue,
                      FilmId = ticket.Projection.FilmId,
                      Title = ticket.Projection.Film.Title,
+                     IsPaymentSuccess = ticket.IsPaymentSuccess
                  }).ToList()
              }).ToList();
 

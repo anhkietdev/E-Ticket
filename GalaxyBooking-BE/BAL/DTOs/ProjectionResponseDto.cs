@@ -41,5 +41,6 @@ namespace BAL.DTOs
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public string AppTransId { get; set; }
+        public bool IsPaymentSuccess { get; set; }
     }
 }
