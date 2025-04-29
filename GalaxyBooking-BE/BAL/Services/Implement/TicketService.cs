@@ -259,7 +259,7 @@ namespace BAL.Services.Implement
                      UserId = ticket.UserId,
                      SeatNumber = ticket.Seat?.SeatNumber,
                      Row = ticket.Seat.Row,
-                     SeatName = ticket.Seat?.SeatNumber + ticket.Seat.Row,
+                     SeatName = ticket.Seat.Row + ticket.Seat?.SeatNumber,
                      RoomNumber = ticket.Projection?.Room?.RoomNumber,
                      StartTime = ticket.Projection?.StartTime ?? DateTime.MinValue,
                      EndTime = ticket.Projection?.EndTime ?? DateTime.MinValue,
