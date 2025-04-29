@@ -81,7 +81,7 @@ namespace BAL.Services.Implement
                 Password = HashPass.HashWithSHA256(registerDto.Password),
             };
 
-            var check = _unitOfWork.UserRepository.GetAsync(
+            var check = await _unitOfWork.UserRepository.GetAsync(
                 u => u.Email == registerDto.Email,
                 tracked: false
             );
