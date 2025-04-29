@@ -110,6 +110,7 @@ namespace BAL.Services.Implement
                 SeatIds = _mapper.Map<List<SeatDto>>(seatLst),
                 RedirectUrl = returnStatus ? message : string.Empty,
                 TotalPrice = request.TotalPrice,
+                AppTransId = GlobalCache.AppTransIdCache,
             };
         }
 
@@ -263,7 +264,6 @@ namespace BAL.Services.Implement
                  }).ToList()
              }).ToList();
 
-            GlobalCache.AppTransIdCache = string.Empty;
             return grouped;
         }
 
