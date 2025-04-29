@@ -30,12 +30,12 @@ namespace BAL.Services.Implement
                 throw new ArgumentNullException("Seat amount > room capacity");
             }
 
-            var isExistSeat = await _unitOfWork.TicketRepository.AnyAsync(s => request.SeatIds.Contains(s.SeatId));
+            //var isExistSeat = await _unitOfWork.TicketRepository.AnyAsync(s => request.SeatIds.Contains(s.SeatId));
 
-            if (isExistSeat)
-            {
-                throw new ArgumentNullException("One or more seats is not enable ");
-            }
+            //if (isExistSeat)
+            //{
+            //    throw new ArgumentNullException("One or more seats is not enable ");
+            //}
 
             List<Ticket> ticketLst = new List<Ticket>();
             List<Seat> seatLst = new List<Seat>();
